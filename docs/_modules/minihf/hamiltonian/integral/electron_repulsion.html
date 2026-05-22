@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>minihf.hamiltonian.integral.electron_repulsion &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+
+  
+    <link rel="shortcut icon" href="../../../../_static/logo.ico"/>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart.html">Quick Start with MiniHF</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../integral.html">Molecular Integrals in MiniHF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../hf.html">Hartree-Fock Method</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/modules.html">minihf</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">minihf.hamiltonian.integral.electron_repulsion</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for minihf.hamiltonian.integral.electron_repulsion</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian.integral.boys</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.basis.gauss</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrimitiveGaussian</span>
+
+    
+<div class="viewcode-block" id="ElectronRepulsion">
+<a class="viewcode-back" href="../../../../api/minihf.hamiltonian.integral.electron_repulsion.html#minihf.hamiltonian.integral.electron_repulsion.ElectronRepulsion">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ElectronRepulsion</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Obara-Saika scheme for three-dimensional nuclear attraction integral over</span>
+<span class="sd">    primitive Gaussian orbitals.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __init__(self)</span>
+<span class="sd">        Initialize the instance.</span>
+
+<span class="sd">    contracted(self, cga, cgb, cgc, cgd)</span>
+<span class="sd">        Evaluate integral over contracted GTOs.</span>
+
+<span class="sd">    target(self, N, pga, pgb, pgc, pgd)</span>
+<span class="sd">        Obtain the target integral in the Obara-Saika recurrence relations.</span>
+
+<span class="sd">    recurrence(self, r, N, pga, pgb, pgc, pgd, pga_1, pga_2, pgb_1, pgc_1, pgd_1)</span>
+<span class="sd">        Run the recurrence.</span>
+
+<span class="sd">    new_gaussian(self, r, pga, pgb, pgc, pgd)</span>
+<span class="sd">        Generate all the new primitive GTOs in the Obara-Saika recurrence relations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ElectronRepulsion.__init__">
+<a class="viewcode-back" href="../../../../api/minihf.hamiltonian.integral.electron_repulsion.html#minihf.hamiltonian.integral.electron_repulsion.ElectronRepulsion.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boys_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_eri_target_cache</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="ElectronRepulsion.contracted">
+<a class="viewcode-back" href="../../../../api/minihf.hamiltonian.integral.electron_repulsion.html#minihf.hamiltonian.integral.electron_repulsion.ElectronRepulsion.contracted">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contracted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cga</span><span class="p">,</span> <span class="n">cgb</span><span class="p">,</span> <span class="n">cgc</span><span class="p">,</span> <span class="n">cgd</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate integral over contracted GTOs.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cga: ContractedGaussian</span>
+<span class="sd">            The first contracted gaussian orbital.</span>
+
+<span class="sd">        cgb: ContractedGaussian</span>
+<span class="sd">            The second contracted gaussian orbital.</span>
+
+<span class="sd">        cgc: ContractedGaussian</span>
+<span class="sd">            The third contracted gaussian orbital.</span>
+
+<span class="sd">        cgd: ContractedGaussian</span>
+<span class="sd">            The fourth contracted gaussian orbital.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        result : float</span>
+<span class="sd">            Integral value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">l_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cga</span><span class="o">.</span><span class="n">shell</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cgb</span><span class="o">.</span><span class="n">shell</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cgc</span><span class="o">.</span><span class="n">shell</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cgd</span><span class="o">.</span><span class="n">shell</span><span class="p">)</span>
+
+        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cga</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cgb</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cgc</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cgd</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+        <span class="n">RAB2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">B</span><span class="p">,</span> <span class="n">A</span> <span class="o">-</span> <span class="n">B</span><span class="p">)</span>
+        <span class="n">RCD2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C</span> <span class="o">-</span> <span class="n">D</span><span class="p">,</span> <span class="n">C</span> <span class="o">-</span> <span class="n">D</span><span class="p">)</span>
+
+        <span class="n">primitives_a</span> <span class="o">=</span> <span class="n">cga</span><span class="o">.</span><span class="n">expansion</span>
+        <span class="n">primitives_b</span> <span class="o">=</span> <span class="n">cgb</span><span class="o">.</span><span class="n">expansion</span>
+        <span class="n">primitives_c</span> <span class="o">=</span> <span class="n">cgc</span><span class="o">.</span><span class="n">expansion</span>
+        <span class="n">primitives_d</span> <span class="o">=</span> <span class="n">cgd</span><span class="o">.</span><span class="n">expansion</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">primitives_a</span><span class="p">,</span> <span class="n">primitives_b</span><span class="p">,</span> <span class="n">primitives_c</span><span class="p">,</span> <span class="n">primitives_d</span><span class="p">):</span>
+            <span class="n">ca</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">coefficient</span>
+            <span class="n">cb</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">coefficient</span>
+            <span class="n">cc</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">coefficient</span>
+            <span class="n">cd</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">coefficient</span>
+            <span class="n">na</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">norm</span>
+            <span class="n">nb</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">norm</span>
+            <span class="n">nc</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">norm</span>
+            <span class="n">nd</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">norm</span>
+            <span class="n">contraction</span> <span class="o">=</span> <span class="n">ca</span> <span class="o">*</span> <span class="n">cb</span> <span class="o">*</span> <span class="n">cc</span> <span class="o">*</span> <span class="n">cd</span> <span class="o">*</span> <span class="n">na</span> <span class="o">*</span> <span class="n">nb</span> <span class="o">*</span> <span class="n">nc</span> <span class="o">*</span> <span class="n">nd</span>
+
+            <span class="n">a</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">exponent</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">exponent</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">exponent</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">exponent</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">nu</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">c</span><span class="o">+</span><span class="n">d</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="n">q</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">q</span><span class="p">)</span>
+
+            <span class="n">P</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">A</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">B</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">C</span><span class="o">+</span><span class="n">d</span><span class="o">*</span><span class="n">D</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">c</span><span class="o">+</span><span class="n">d</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="o">*</span><span class="n">P</span><span class="o">+</span><span class="n">q</span><span class="o">*</span><span class="n">Q</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">)</span>
+            <span class="n">RPQ2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">P</span> <span class="o">-</span> <span class="n">Q</span><span class="p">,</span> <span class="n">P</span> <span class="o">-</span> <span class="n">Q</span><span class="p">)</span>
+
+            <span class="c1"># Build boys function F_{N}(x)</span>
+            <span class="n">Kab</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">mu</span> <span class="o">*</span> <span class="n">RAB2</span><span class="p">)</span>
+            <span class="n">Kcd</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">nu</span> <span class="o">*</span> <span class="n">RCD2</span><span class="p">)</span>
+            <span class="n">boys_pre_factor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">p</span><span class="o">*</span><span class="n">q</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">Kab</span><span class="o">*</span><span class="n">Kcd</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="n">l_total</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">RPQ2</span>
+            <span class="n">boys_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boys_cached</span><span class="p">(</span><span class="n">l_total</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">Theta_N_0000_0000_0000</span> <span class="o">=</span> <span class="n">boys_pre_factor</span> <span class="o">*</span> <span class="n">boys_function</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">boys_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">l_total</span><span class="p">:</span> <span class="n">Theta_N_0000_0000_0000</span><span class="p">}</span>
+
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">l_total</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">boys_function</span> <span class="o">=</span> <span class="n">boys_recursion</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">boys_function</span><span class="p">)</span>
+                <span class="n">N</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">boys_dict</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">boys_pre_factor</span> <span class="o">*</span> <span class="n">boys_function</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">contraction</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">65536</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_boys_cached</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">boys</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ElectronRepulsion.target">
+<a class="viewcode-back" href="../../../../api/minihf.hamiltonian.integral.electron_repulsion.html#minihf.hamiltonian.integral.electron_repulsion.ElectronRepulsion.target">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtain the target integral in the Obara-Saika recurrence relations.&quot;&quot;&quot;</span>
+        <span class="n">shell_a</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">shell</span>
+        <span class="n">shell_b</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">shell</span>
+        <span class="n">shell_c</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">shell</span>
+        <span class="n">shell_d</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">shell</span>
+        
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">N</span><span class="p">,</span>
+            <span class="n">shell_a</span><span class="p">,</span>
+            <span class="n">shell_b</span><span class="p">,</span>
+            <span class="n">shell_c</span><span class="p">,</span>
+            <span class="n">shell_d</span><span class="p">,</span>
+            <span class="n">pga</span><span class="o">.</span><span class="n">exponent</span><span class="p">,</span>
+            <span class="n">pgb</span><span class="o">.</span><span class="n">exponent</span><span class="p">,</span>
+            <span class="n">pgc</span><span class="o">.</span><span class="n">exponent</span><span class="p">,</span>
+            <span class="n">pgd</span><span class="o">.</span><span class="n">exponent</span><span class="p">,</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">pga</span><span class="o">.</span><span class="n">origin</span><span class="p">),</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">pgb</span><span class="o">.</span><span class="n">origin</span><span class="p">),</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">pgc</span><span class="o">.</span><span class="n">origin</span><span class="p">),</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">pgd</span><span class="o">.</span><span class="n">origin</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eri_target_cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eri_target_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="n">sa0</span><span class="p">,</span> <span class="n">sa1</span><span class="p">,</span> <span class="n">sa2</span> <span class="o">=</span> <span class="n">shell_a</span>
+        <span class="n">sb0</span><span class="p">,</span> <span class="n">sb1</span><span class="p">,</span> <span class="n">sb2</span> <span class="o">=</span> <span class="n">shell_b</span>
+        <span class="n">sc0</span><span class="p">,</span> <span class="n">sc1</span><span class="p">,</span> <span class="n">sc2</span> <span class="o">=</span> <span class="n">shell_c</span>
+        <span class="n">sd0</span><span class="p">,</span> <span class="n">sd1</span><span class="p">,</span> <span class="n">sd2</span> <span class="o">=</span> <span class="n">shell_d</span>
+
+        <span class="k">if</span> <span class="n">sa0</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sa1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sa2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sb0</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sb1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sb2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sc0</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sc1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sc2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sd0</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sd1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sd2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrence</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">new_gaussian</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pga</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boys_dict</span><span class="p">[</span><span class="n">N</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_eri_target_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="ElectronRepulsion.recurrence">
+<a class="viewcode-back" href="../../../../api/minihf.hamiltonian.integral.electron_repulsion.html#minihf.hamiltonian.integral.electron_repulsion.ElectronRepulsion.recurrence">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recurrence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">,</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pga_2</span><span class="p">,</span> <span class="n">pgb_1</span><span class="p">,</span> <span class="n">pgc_1</span><span class="p">,</span> <span class="n">pgd_1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the recurrence.&quot;&quot;&quot;</span>
+        <span class="c1"># Precompute constants</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">exponent</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">exponent</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">exponent</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">exponent</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        
+        <span class="n">A</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">origin</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">origin</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">origin</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">origin</span>
+        
+        <span class="c1"># Compute P and Q efficiently</span>
+        <span class="n">Px</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">p</span>
+        <span class="n">Py</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">p</span>
+        <span class="n">Pz</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">p</span>
+        <span class="n">Qx</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">D</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">q</span>
+        <span class="n">Qy</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">D</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">q</span>
+        <span class="n">Qz</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">C</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">D</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">q</span>
+        
+        <span class="n">XPA_r</span> <span class="o">=</span> <span class="p">(</span><span class="n">Px</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Py</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Pz</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">])[</span><span class="n">r</span><span class="p">]</span>
+        <span class="n">XPQ_r</span> <span class="o">=</span> <span class="p">(</span><span class="n">Px</span> <span class="o">-</span> <span class="n">Qx</span><span class="p">,</span> <span class="n">Py</span> <span class="o">-</span> <span class="n">Qy</span><span class="p">,</span> <span class="n">Pz</span> <span class="o">-</span> <span class="n">Qz</span><span class="p">)[</span><span class="n">r</span><span class="p">]</span>
+        
+        <span class="c1"># Precompute common terms</span>
+        <span class="n">two_p</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span>
+        <span class="n">two_p_sq</span> <span class="o">=</span> <span class="n">two_p</span> <span class="o">*</span> <span class="n">p</span>
+        <span class="n">two_pq</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">q</span><span class="p">)</span>
+        <span class="n">alpha_over_p</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">p</span>
+        <span class="n">alpha_over_2p</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">two_p</span>
+        <span class="n">alpha_over_2p_sq</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">two_p_sq</span>
+        
+        <span class="n">term1</span> <span class="o">=</span> <span class="n">term2</span> <span class="o">=</span> <span class="n">term3</span> <span class="o">=</span> <span class="n">term4</span> <span class="o">=</span> <span class="n">term5</span> <span class="o">=</span> <span class="n">term6</span> <span class="o">=</span> <span class="n">term7</span> <span class="o">=</span> <span class="n">term8</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
+        
+        <span class="k">if</span> <span class="n">XPA_r</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="n">XPA_r</span> <span class="o">*</span> <span class="n">target</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">XPQ_r</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="n">alpha_over_p</span> <span class="o">*</span> <span class="n">XPQ_r</span> <span class="o">*</span> <span class="n">target</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">)</span>
+        
+        <span class="n">shell_pga1_r</span> <span class="o">=</span> <span class="n">pga_1</span><span class="o">.</span><span class="n">shell</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">shell_pga1_r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">term3</span> <span class="o">=</span> <span class="n">shell_pga1_r</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">target</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">pga_2</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">)</span>
+            <span class="n">term4</span> <span class="o">=</span> <span class="n">shell_pga1_r</span> <span class="o">*</span> <span class="n">alpha_over_2p_sq</span> <span class="o">*</span> <span class="n">target</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">pga_2</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">)</span>
+        
+        <span class="n">shell_pgb_r</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">shell</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">shell_pgb_r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">term5</span> <span class="o">=</span> <span class="n">shell_pgb_r</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">target</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pgb_1</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">)</span>
+            <span class="n">term6</span> <span class="o">=</span> <span class="n">shell_pgb_r</span> <span class="o">*</span> <span class="n">alpha_over_2p_sq</span> <span class="o">*</span> <span class="n">target</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pgb_1</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">)</span>
+        
+        <span class="n">shell_pgc_r</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">shell</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">shell_pgc_r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">term7</span> <span class="o">=</span> <span class="n">shell_pgc_r</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">q</span><span class="p">))</span> <span class="o">*</span> <span class="n">target</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc_1</span><span class="p">,</span> <span class="n">pgd</span><span class="p">)</span>
+        
+        <span class="n">shell_pgd_r</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">shell</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">shell_pgd_r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">term8</span> <span class="o">=</span> <span class="n">shell_pgd_r</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">q</span><span class="p">))</span> <span class="o">*</span> <span class="n">target</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd_1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">term1</span> <span class="o">-</span> <span class="n">term2</span> <span class="o">+</span> <span class="n">term3</span> <span class="o">-</span> <span class="n">term4</span> <span class="o">+</span> <span class="n">term5</span> <span class="o">-</span> <span class="n">term6</span> <span class="o">+</span> <span class="n">term7</span> <span class="o">+</span> <span class="n">term8</span></div>
+
+
+<div class="viewcode-block" id="ElectronRepulsion.new_gaussian">
+<a class="viewcode-back" href="../../../../api/minihf.hamiltonian.integral.electron_repulsion.html#minihf.hamiltonian.integral.electron_repulsion.ElectronRepulsion.new_gaussian">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">new_gaussian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">pga</span><span class="p">,</span> <span class="n">pgb</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">pgd</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate all the new primitive GTOs in the Obara-Saika recurrence relations.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r : int</span>
+<span class="sd">            Cartesian index 0, 1, 2. </span>
+
+<span class="sd">        N : int</span>
+<span class="sd">            Order of the boys function F_{N}(x).</span>
+
+<span class="sd">        pga : PrimitiveGaussian</span>
+<span class="sd">            The first primitive gaussian orbital.</span>
+
+<span class="sd">        pgb : PrimitiveGaussian</span>
+<span class="sd">            The second primitive gaussian orbital.</span>
+
+<span class="sd">        pgc : PrimitiveGaussian</span>
+<span class="sd">            The third primitive gaussian orbital.</span>
+
+<span class="sd">        pgd : PrimitiveGaussian</span>
+<span class="sd">            The fourth primitive gaussian orbital.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        result : Tuple(pg,pg,pg,pg,pg)</span>
+<span class="sd">            Tuple of 5 PrimitiveGaussian orbital instance. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ca</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">coefficient</span>
+        <span class="n">cb</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">coefficient</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">coefficient</span>
+        <span class="n">cd</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">coefficient</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">exponent</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">exponent</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">exponent</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">exponent</span>
+
+        <span class="n">A</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">origin</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">origin</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">origin</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">origin</span>
+
+        <span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">,</span><span class="n">iz</span> <span class="o">=</span> <span class="n">pga</span><span class="o">.</span><span class="n">shell</span>
+        <span class="n">jx</span><span class="p">,</span><span class="n">jy</span><span class="p">,</span><span class="n">jz</span> <span class="o">=</span> <span class="n">pgb</span><span class="o">.</span><span class="n">shell</span>
+        <span class="n">kx</span><span class="p">,</span><span class="n">ky</span><span class="p">,</span><span class="n">kz</span> <span class="o">=</span> <span class="n">pgc</span><span class="o">.</span><span class="n">shell</span>
+        <span class="n">lx</span><span class="p">,</span><span class="n">ly</span><span class="p">,</span><span class="n">lz</span> <span class="o">=</span> <span class="n">pgd</span><span class="o">.</span><span class="n">shell</span>
+
+        <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">pga_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">ix</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">iz</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+            <span class="n">pga_2</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">ix</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">iz</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+            <span class="n">pgb_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="p">(</span><span class="n">jx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">jy</span><span class="p">,</span> <span class="n">jz</span><span class="p">),</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">pgc_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="p">(</span><span class="n">kx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ky</span><span class="p">,</span> <span class="n">kz</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span>
+            <span class="n">pgd_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cd</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="p">(</span><span class="n">lx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ly</span><span class="p">,</span> <span class="n">lz</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pga_2</span><span class="p">,</span> <span class="n">pgb_1</span><span class="p">,</span> <span class="n">pgc_1</span><span class="p">,</span> <span class="n">pgd_1</span>
+        <span class="k">elif</span> <span class="n">r</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">pga_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">iz</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+            <span class="n">pga_2</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">iz</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+            <span class="n">pgb_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="p">(</span><span class="n">jx</span><span class="p">,</span> <span class="n">jy</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">jz</span><span class="p">),</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">pgc_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="p">(</span><span class="n">kx</span><span class="p">,</span> <span class="n">ky</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">kz</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span>
+            <span class="n">pgd_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cd</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="p">(</span><span class="n">lx</span><span class="p">,</span> <span class="n">ly</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lz</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pga_2</span><span class="p">,</span> <span class="n">pgb_1</span><span class="p">,</span> <span class="n">pgc_1</span><span class="p">,</span> <span class="n">pgd_1</span>
+        <span class="k">elif</span> <span class="n">r</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">pga_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">iz</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+            <span class="n">pga_2</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">iz</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+            <span class="n">pgb_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="p">(</span><span class="n">jx</span><span class="p">,</span> <span class="n">jy</span><span class="p">,</span> <span class="n">jz</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">pgc_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="p">(</span><span class="n">kx</span><span class="p">,</span> <span class="n">ky</span><span class="p">,</span> <span class="n">kz</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span>
+            <span class="n">pgd_1</span> <span class="o">=</span> <span class="n">PrimitiveGaussian</span><span class="p">(</span><span class="n">cd</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="p">(</span><span class="n">lx</span><span class="p">,</span> <span class="n">ly</span><span class="p">,</span> <span class="n">lz</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">pga_1</span><span class="p">,</span> <span class="n">pga_2</span><span class="p">,</span> <span class="n">pgb_1</span><span class="p">,</span> <span class="n">pgc_1</span><span class="p">,</span> <span class="n">pgd_1</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

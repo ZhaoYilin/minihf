@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Start with MiniHF &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+
+  
+    <link rel="shortcut icon" href="_static/logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Molecular Integrals in MiniHF" href="integral.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start with MiniHF</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-molecule">1. Creating a Molecule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-basis-set">2. Creating a Basis Set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#constructing-the-molecular-hamiltonian">3. Constructing the Molecular Hamiltonian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#solving-the-hartree-fock-equation">4. Solving the Hartree-Fock Equation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="integral.html">Molecular Integrals in MiniHF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hf.html">Hartree-Fock Method</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">minihf</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Quick Start with MiniHF</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/quickstart.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="quick-start-with-minihf">
+<h1>Quick Start with MiniHF<a class="headerlink" href="#quick-start-with-minihf" title="Link to this heading"></a></h1>
+<p>Welcome to MiniHF, a lightweight Hartree-Fock quantum chemistry library. This notebook provides a comprehensive introduction to using MiniHF for molecular structure calculations. We’ll walk through the complete workflow of:</p>
+<ol class="arabic simple">
+<li><p><strong>Creating molecules</strong> with the <code class="docutils literal notranslate"><span class="pre">Molecule</span></code> class</p></li>
+<li><p><strong>Building basis sets</strong> with the <code class="docutils literal notranslate"><span class="pre">BasisSet</span></code> class</p></li>
+<li><p><strong>Constructing molecular Hamiltonians</strong> with the <code class="docutils literal notranslate"><span class="pre">Hamiltonian</span></code> class</p></li>
+<li><p><strong>Solving Hartree-Fock equations</strong> with the <code class="docutils literal notranslate"><span class="pre">HFSolver</span></code> class</p></li>
+</ol>
+<p>Let’s get started!</p>
+<section id="creating-a-molecule">
+<h2>1. Creating a Molecule<a class="headerlink" href="#creating-a-molecule" title="Link to this heading"></a></h2>
+<p>The first step in any quantum chemistry calculation is to define the molecular system. In MiniHF, we use the <code class="docutils literal notranslate"><span class="pre">Molecule</span></code> class to represent molecules. Atoms can be specified using element symbols or atomic numbers, followed by their Cartesian coordinates in angstroms.</p>
+<p>Let’s create a water molecule (H₂O) as our example system.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">minihf.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">Molecule</span>
+
+<span class="c1"># Define atoms with coordinates (element symbol or atomic number + x, y, z in angstroms)</span>
+<span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;O 0.0, 0.0, 0.0&#39;</span><span class="p">,</span>      <span class="c1"># Oxygen at origin</span>
+    <span class="s1">&#39;H 0.0, -0.757, 0.587&#39;</span><span class="p">,</span> <span class="c1"># Hydrogen atom</span>
+    <span class="s1">&#39;H 0.0, 0.757, 0.587&#39;</span>   <span class="c1"># Hydrogen atom</span>
+<span class="p">]</span>
+
+<span class="c1"># Build the molecule (charge=0 for neutral molecule, multiplicity=1 for singlet)</span>
+<span class="n">mol</span> <span class="o">=</span> <span class="n">Molecule</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully created molecule: </span><span class="si">{</span><span class="n">mol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of atoms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Molecular charge: </span><span class="si">{</span><span class="n">mol</span><span class="o">.</span><span class="n">charge</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multiplicity: </span><span class="si">{</span><span class="n">mol</span><span class="o">.</span><span class="n">multiplicity</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Print detailed atom information</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Atom details:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mol</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Atom </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">symbol</span><span class="si">}</span><span class="s2"> (Z=</span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s2">) at </span><span class="si">{</span><span class="n">atom</span><span class="o">.</span><span class="n">coords</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Successfully created molecule: Molecule(atoms=3, charge=0, multiplicity=1)
+Number of atoms: 3
+Molecular charge: 0
+Multiplicity: 1
+
+Atom details:
+  Atom 0: O (Z=8) at [0. 0. 0.]
+  Atom 1: H (Z=1) at [ 0.    -0.757  0.587]
+  Atom 2: H (Z=1) at [0.    0.757 0.587]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="creating-a-basis-set">
+<h2>2. Creating a Basis Set<a class="headerlink" href="#creating-a-basis-set" title="Link to this heading"></a></h2>
+<p>A basis set is a set of mathematical functions (typically Gaussian-type orbitals) used to expand the molecular orbitals. MiniHF supports various standard basis sets through the <code class="docutils literal notranslate"><span class="pre">BasisSet</span></code> class.</p>
+<p>We’ll use the <strong>6-31G</strong> basis set, which is a popular split-valence basis set that provides a good balance between computational cost and accuracy for small molecules.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">minihf.basis</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasisSet</span>
+
+<span class="c1"># Build basis set for the water molecule</span>
+<span class="n">basis</span> <span class="o">=</span> <span class="n">BasisSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="s1">&#39;6-31g.nwchem&#39;</span><span class="p">)</span>
+
+<span class="c1"># Let&#39;s examine the basis functions for the oxygen atom</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Basis set created with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span><span class="si">}</span><span class="s2"> basis functions:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">orb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">basis</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Orbital </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: shell=</span><span class="si">{</span><span class="n">orb</span><span class="o">.</span><span class="n">shell</span><span class="si">}</span><span class="s2">, n_primitives=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">orb</span><span class="o">.</span><span class="n">exponents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Basis set created with 13 basis functions:
+  Orbital 0: shell=(0, 0, 0), n_primitives=6
+  Orbital 1: shell=(0, 0, 0), n_primitives=3
+  Orbital 2: shell=(1, 0, 0), n_primitives=3
+  Orbital 3: shell=(0, 1, 0), n_primitives=3
+  Orbital 4: shell=(0, 0, 1), n_primitives=3
+  Orbital 5: shell=(0, 0, 0), n_primitives=1
+  Orbital 6: shell=(1, 0, 0), n_primitives=1
+  Orbital 7: shell=(0, 1, 0), n_primitives=1
+  Orbital 8: shell=(0, 0, 1), n_primitives=1
+  Orbital 9: shell=(0, 0, 0), n_primitives=3
+  Orbital 10: shell=(0, 0, 0), n_primitives=1
+  Orbital 11: shell=(0, 0, 0), n_primitives=3
+  Orbital 12: shell=(0, 0, 0), n_primitives=1
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="constructing-the-molecular-hamiltonian">
+<h2>3. Constructing the Molecular Hamiltonian<a class="headerlink" href="#constructing-the-molecular-hamiltonian" title="Link to this heading"></a></h2>
+<p>The molecular Hamiltonian contains all the necessary information to describe the quantum mechanical system. It includes:</p>
+<ul class="simple">
+<li><p><strong>Overlap matrix (S)</strong>: Measures the overlap between basis functions</p></li>
+<li><p><strong>Kinetic energy matrix (T)</strong>: Electron kinetic energy integrals</p></li>
+<li><p><strong>Potential energy matrix (V)</strong>: Electron-nuclear attraction integrals</p></li>
+<li><p><strong>Core Hamiltonian (H_core)</strong>: T + V, the one-electron Hamiltonian</p></li>
+<li><p><strong>Electron repulsion integrals (Eri)</strong>: Two-electron Coulomb integrals</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">Hamiltonian</span></code> class automates the calculation of all these integrals.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hamiltonian</span>
+
+<span class="c1"># Build the Hamiltonian for our molecule</span>
+<span class="n">ham</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">basis</span><span class="p">)</span>
+
+<span class="c1"># Check the shapes of the integral matrices</span>
+<span class="n">n_bf</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of basis functions: </span><span class="si">{</span><span class="n">n_bf</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Matrix dimensions:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Overlap matrix (S): </span><span class="si">{</span><span class="n">ham</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Kinetic energy matrix (T): </span><span class="si">{</span><span class="n">ham</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Potential energy matrix (V): </span><span class="si">{</span><span class="n">ham</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Core Hamiltonian (H_core): </span><span class="si">{</span><span class="n">ham</span><span class="p">[</span><span class="s1">&#39;Hcore&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Electron repulsion integrals (Eri): </span><span class="si">{</span><span class="n">ham</span><span class="p">[</span><span class="s1">&#39;Eri&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of basis functions: 13
+
+Matrix dimensions:
+  Overlap matrix (S): (13, 13)
+  Kinetic energy matrix (T): (13, 13)
+  Potential energy matrix (V): (13, 13)
+  Core Hamiltonian (H_core): (13, 13)
+  Electron repulsion integrals (Eri): (13, 13, 13, 13)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="solving-the-hartree-fock-equation">
+<h2>4. Solving the Hartree-Fock Equation<a class="headerlink" href="#solving-the-hartree-fock-equation" title="Link to this heading"></a></h2>
+<p>The Hartree-Fock method is the simplest self-consistent field (SCF) approach for solving the electronic structure problem. It approximates the many-electron wavefunction as a product of single-electron orbitals.</p>
+<p>MiniHF’s <code class="docutils literal notranslate"><span class="pre">HFSolver</span></code> class implements the restricted Hartree-Fock (RHF) method for closed-shell molecules like water.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">minihf.scf.hf_solver</span><span class="w"> </span><span class="kn">import</span> <span class="n">HFSolver</span>
+
+<span class="c1"># Initialize the HF solver</span>
+<span class="n">hf_solver</span> <span class="o">=</span> <span class="n">HFSolver</span><span class="p">(</span><span class="n">ham</span><span class="p">)</span>
+
+<span class="c1"># Solve the RHF equations</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">hf_solver</span><span class="o">.</span><span class="n">rhf</span><span class="p">()</span>
+
+<span class="c1"># Extract key results</span>
+<span class="n">energy_total</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;energy_total&#39;</span><span class="p">]</span>
+<span class="n">energy_elec</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;energy_elec&#39;</span><span class="p">]</span>
+<span class="n">energy_nuc</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;energy_nuc&#39;</span><span class="p">]</span>
+<span class="n">mo_energies</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;mo_energy&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Hartree-Fock Calculation Results ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total energy: </span><span class="si">{</span><span class="n">energy_total</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Electronic energy: </span><span class="si">{</span><span class="n">energy_elec</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nuclear repulsion energy: </span><span class="si">{</span><span class="n">energy_nuc</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+
+<span class="c1"># Print molecular orbital energies</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Molecular orbital energies (eV):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">energy</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mo_energies</span><span class="p">):</span>
+    <span class="c1"># Convert Hartree to eV (1 Hartree = 27.2114 eV)</span>
+    <span class="n">energy_eV</span> <span class="o">=</span> <span class="n">energy</span> <span class="o">*</span> <span class="mf">27.2114</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  MO </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">energy_eV</span><span class="si">:</span><span class="s2">&gt;8.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">)</span>
+
+<span class="c1"># Identify occupied and virtual orbitals (water has 10 electrons = 5 occupied MOs)</span>
+<span class="n">n_occupied</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Occupied orbitals: MO 1-</span><span class="si">{</span><span class="n">n_occupied</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Virtual orbitals: MO </span><span class="si">{</span><span class="n">n_occupied</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mo_energies</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Calculate HOMO-LUMO gap</span>
+<span class="n">homo_energy</span> <span class="o">=</span> <span class="n">mo_energies</span><span class="p">[</span><span class="n">n_occupied</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">27.2114</span>
+<span class="n">lumo_energy</span> <span class="o">=</span> <span class="n">mo_energies</span><span class="p">[</span><span class="n">n_occupied</span><span class="p">]</span> <span class="o">*</span> <span class="mf">27.2114</span>
+<span class="n">homo_lumo_gap</span> <span class="o">=</span> <span class="n">lumo_energy</span> <span class="o">-</span> <span class="n">homo_energy</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">HOMO energy: </span><span class="si">{</span><span class="n">homo_energy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LUMO energy: </span><span class="si">{</span><span class="n">lumo_energy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HOMO-LUMO gap: </span><span class="si">{</span><span class="n">homo_lumo_gap</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Hartree-Fock Calculation Results ===
+
+Total energy: -74.498108 Hartree
+Electronic energy: -91.861400 Hartree
+Nuclear repulsion energy: 17.363292 Hartree
+
+Molecular orbital energies (eV):
+  MO 1: -559.0048 eV
+  MO 2: -47.4916 eV
+  MO 3: -28.2713 eV
+  MO 4: -17.2360 eV
+  MO 5: -15.3793 eV
+  MO 6:   7.0822 eV
+  MO 7:   9.5516 eV
+  MO 8:  28.3278 eV
+  MO 9:  30.6858 eV
+  MO 10:  31.8366 eV
+  MO 11:  46.2353 eV
+  MO 12:  62.6364 eV
+  MO 13:  77.9588 eV
+
+Occupied orbitals: MO 1-5
+Virtual orbitals: MO 6-13
+
+HOMO energy: -15.3793 eV
+LUMO energy: 7.0822 eV
+HOMO-LUMO gap: 22.4614 eV
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="integral.html" class="btn btn-neutral float-right" title="Molecular Integrals in MiniHF" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

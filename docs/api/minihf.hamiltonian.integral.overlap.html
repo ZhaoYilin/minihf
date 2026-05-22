@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>minihf.hamiltonian.integral.overlap module &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+
+  
+    <link rel="shortcut icon" href="../_static/logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="minihf.hamiltonian.auxiliary module" href="minihf.hamiltonian.auxiliary.html" />
+    <link rel="prev" title="minihf.hamiltonian.integral.nuclear_attraction module" href="minihf.hamiltonian.integral.nuclear_attraction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start with MiniHF</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../integral.html">Molecular Integrals in MiniHF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hf.html">Hartree-Fock Method</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">minihf</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="minihf.html">minihf package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="minihf.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="minihf.basis.html">minihf.basis package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="minihf.hamiltonian.html">minihf.hamiltonian package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="minihf.molecule.html">minihf.molecule package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="minihf.scf.html">minihf.scf package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="minihf.html#module-minihf">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">minihf</a></li>
+          <li class="breadcrumb-item"><a href="minihf.html">minihf package</a></li>
+          <li class="breadcrumb-item"><a href="minihf.hamiltonian.html">minihf.hamiltonian package</a></li>
+          <li class="breadcrumb-item"><a href="minihf.hamiltonian.integral.html">minihf.hamiltonian.integral package</a></li>
+      <li class="breadcrumb-item active">minihf.hamiltonian.integral.overlap module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/minihf.hamiltonian.integral.overlap.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-minihf.hamiltonian.integral.overlap">
+<span id="minihf-hamiltonian-integral-overlap-module"></span><h1>minihf.hamiltonian.integral.overlap module<a class="headerlink" href="#module-minihf.hamiltonian.integral.overlap" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="minihf.hamiltonian.integral.overlap.Overlap">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">minihf.hamiltonian.integral.overlap.</span></span><span class="sig-name descname"><span class="pre">Overlap</span></span><a class="reference internal" href="../_modules/minihf/hamiltonian/integral/overlap.html#Overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.integral.overlap.Overlap" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The Obara-Saika scheme for overlap integral.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.integral.overlap.Overlap.contracted">
+<span class="sig-name descname"><span class="pre">contracted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cga</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/integral/overlap.html#Overlap.contracted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.integral.overlap.Overlap.contracted" title="Link to this definition"></a></dt>
+<dd><p>Evaluate integral over contracted GTOs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.integral.overlap.Overlap.primitive">
+<span class="sig-name descname"><span class="pre">primitive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pga</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/integral/overlap.html#Overlap.primitive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.integral.overlap.Overlap.primitive" title="Link to this definition"></a></dt>
+<dd><p>Evaluate integral over primitive GTOs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.integral.overlap.Overlap.S1d">
+<span class="sig-name descname"><span class="pre">S1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pga</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/integral/overlap.html#Overlap.S1d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.integral.overlap.Overlap.S1d" title="Link to this definition"></a></dt>
+<dd><p>Obtain the target integral in the Obara-Saika recurrence relations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">contracted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cga</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/integral/overlap.html#Overlap.contracted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Evaluate integral over contracted GTOs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cga</strong> (<a class="reference internal" href="minihf.basis.gauss.html#minihf.basis.gauss.ContractedGaussian" title="minihf.basis.gauss.ContractedGaussian"><em>ContractedGaussian</em></a>) – The first contracted gaussian orbital.</p></li>
+<li><p><strong>cgb</strong> (<a class="reference internal" href="minihf.basis.gauss.html#minihf.basis.gauss.ContractedGaussian" title="minihf.basis.gauss.ContractedGaussian"><em>ContractedGaussian</em></a>) – The second contracted gaussian orbital.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – Integral value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">primitive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pga</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/integral/overlap.html#Overlap.primitive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Evaluate integral over primitive gaussian orbitals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pga</strong> (<a class="reference internal" href="minihf.basis.gauss.html#minihf.basis.gauss.PrimitiveGaussian" title="minihf.basis.gauss.PrimitiveGaussian"><em>PrimitiveGaussian</em></a>) – The first primitive gaussian orbital.</p></li>
+<li><p><strong>pgb</strong> (<a class="reference internal" href="minihf.basis.gauss.html#minihf.basis.gauss.PrimitiveGaussian" title="minihf.basis.gauss.PrimitiveGaussian"><em>PrimitiveGaussian</em></a>) – The second primitive gaussian orbital.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – Integral value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">S1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/integral/overlap.html#Overlap.S1d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>Obtain the target integral in the Obara-Saika recurrence relations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Origin of the basis for one direction.</p></li>
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Angular momentum for one direction.</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Primitive Gaussian exponent for one direction.</p></li>
+<li><p><strong>B</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Origin of the basis for one direction.</p></li>
+<li><p><strong>j</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Angular momentum for one direction.</p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Primitive Gaussian exponent for one direction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – Integral value for one direction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="minihf.hamiltonian.integral.nuclear_attraction.html" class="btn btn-neutral float-left" title="minihf.hamiltonian.integral.nuclear_attraction module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="minihf.hamiltonian.auxiliary.html" class="btn btn-neutral float-right" title="minihf.hamiltonian.auxiliary module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

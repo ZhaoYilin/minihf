@@ -1,0 +1,721 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hartree-Fock Method &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+
+  
+    <link rel="shortcut icon" href="_static/logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="minihf" href="api/modules.html" />
+    <link rel="prev" title="Molecular Integrals in MiniHF" href="integral.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start with MiniHF</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="integral.html">Molecular Integrals in MiniHF</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Hartree-Fock Method</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hartree-fock-theory">1. Hartree-Fock Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-many-electron-problem">The Many-Electron Problem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-hartree-fock-approximation">The Hartree-Fock Approximation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-fock-matrix">The Fock Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#matrix-formulation">Matrix Formulation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#initial-guess">2. Initial Guess</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#naive-initial-guess-methods">Naive Initial Guess Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#core-hamiltonian-guess">2.1 Core Hamiltonian Guess</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simple-huckel-guess-noniterative">2.2 Simple Hückel Guess (Non‑iterative)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extended-huckel-guess-eht">2.3 Extended Hückel Guess (EHT)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#restricted-hartree-fock-rhf">3. Restricted Hartree-Fock (RHF)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-features-of-rhf">Key Features of RHF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rhf-scf-algorithm">RHF SCF Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convergence-criteria">Convergence Criteria</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#unrestricted-hartree-fock-uhf">4. Unrestricted Hartree-Fock (UHF)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-features-of-uhf">Key Features of UHF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uhf-vs-rhf">UHF vs RHF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin-contamination">Spin Contamination</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#restricted-open-shell-hartree-fock-rohf">5. Restricted Open-shell Hartree-Fock (ROHF)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-features-of-rohf">Key Features of ROHF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rohf-energy-expression">ROHF Energy Expression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#when-to-use-rohf">When to Use ROHF</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#generalized-hartree-fock-ghf">6. Generalized Hartree-Fock (GHF)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-features-of-ghf">Key Features of GHF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ghf-density-matrix">GHF Density Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#when-to-use-ghf">When to Use GHF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#drawbacks-of-ghf">Drawbacks of GHF</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#practical-examples-with-minihf">7. Practical Examples with MiniHF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">8. Summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#method-comparison">Method Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key-takeaways">Key Takeaways</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">minihf</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hartree-Fock Method</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hf.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="hartree-fock-method">
+<h1>Hartree-Fock Method<a class="headerlink" href="#hartree-fock-method" title="Link to this heading"></a></h1>
+<p>The Hartree-Fock (HF) method is the foundation of modern electronic structure theory. It provides a mean-field approximation to the many-electron Schrödinger equation by approximating the wavefunction as a Slater determinant of one-electron orbitals.</p>
+<p>This notebook covers:</p>
+<ol class="arabic simple">
+<li><p><strong>Basic Theory</strong> - The Hartree-Fock approximation</p></li>
+<li><p><strong>Initial Guess</strong> - Methods for starting the SCF procedure</p></li>
+<li><p><strong>Restricted Hartree-Fock (RHF)</strong> - For closed-shell systems</p></li>
+<li><p><strong>Unrestricted Hartree-Fock (UHF)</strong> - For open-shell systems</p></li>
+<li><p><strong>Restricted Open-shell Hartree-Fock (ROHF)</strong> - For open-shell systems with spatial symmetry</p></li>
+<li><p><strong>Practical Examples</strong> - Using MiniHF’s HFSolver</p></li>
+</ol>
+<section id="hartree-fock-theory">
+<h2>1. Hartree-Fock Theory<a class="headerlink" href="#hartree-fock-theory" title="Link to this heading"></a></h2>
+<section id="the-many-electron-problem">
+<h3>The Many-Electron Problem<a class="headerlink" href="#the-many-electron-problem" title="Link to this heading"></a></h3>
+<p>The time-independent Schrödinger equation for a molecule with <span class="math notranslate nohighlight">\(N\)</span> electrons is:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{H} \Psi = E \Psi
+\]</div>
+<p>where the Hamiltonian operator is:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{H} = -\frac{1}{2} \sum_{i=1}^N \nabla_i^2 - \sum_{i=1}^N \sum_{\alpha=1}^M \frac{Z_{\alpha}}{r_{i\alpha}} + \sum_{i=1}^N \sum_{j&gt;i}^N \frac{1}{r_{ij}}
+\]</div>
+</section>
+<section id="the-hartree-fock-approximation">
+<h3>The Hartree-Fock Approximation<a class="headerlink" href="#the-hartree-fock-approximation" title="Link to this heading"></a></h3>
+<p>The HF method approximates the many-electron wavefunction as a Slater determinant of spin-orbitals:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\Psi_{HF} = \frac{1}{\sqrt{N!}} \begin{vmatrix}
+\phi_1(\mathbf{r}_1, \sigma_1) &amp; \phi_2(\mathbf{r}_1, \sigma_1) &amp; \cdots &amp; \phi_N(\mathbf{r}_1, \sigma_1) \\
+\phi_1(\mathbf{r}_2, \sigma_2) &amp; \phi_2(\mathbf{r}_2, \sigma_2) &amp; \cdots &amp; \phi_N(\mathbf{r}_2, \sigma_2) \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\phi_1(\mathbf{r}_N, \sigma_N) &amp; \phi_2(\mathbf{r}_N, \sigma_N) &amp; \cdots &amp; \phi_N(\mathbf{r}_N, \sigma_N)
+\end{vmatrix}
+\end{split}\]</div>
+</section>
+<section id="the-fock-matrix">
+<h3>The Fock Matrix<a class="headerlink" href="#the-fock-matrix" title="Link to this heading"></a></h3>
+<p>Minimizing the energy leads to the <strong>Hartree-Fock equations</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{F} \phi_i = \epsilon_i \phi_i
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{F}\)</span> is the Fock operator:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{F}(\mathbf{r}) = \hat{h}(\mathbf{r}) + \sum_{j=1}^N \left[ \hat{J}_j(\mathbf{r}) - \hat{K}_j(\mathbf{r}) \right]
+\]</div>
+<p>with:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\hat{h}(\mathbf{r})\)</span>: One-electron Hamiltonian (kinetic + nuclear attraction)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{J}_j(\mathbf{r})\)</span>: Coulomb operator (classical electron repulsion)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{K}_j(\mathbf{r})\)</span>: Exchange operator (quantum mechanical exchange)</p></li>
+</ul>
+</section>
+<section id="matrix-formulation">
+<h3>Matrix Formulation<a class="headerlink" href="#matrix-formulation" title="Link to this heading"></a></h3>
+<p>In a basis set <span class="math notranslate nohighlight">\(\{\chi_{\mu}\}\)</span>, the HF equations become:</p>
+<div class="math notranslate nohighlight">
+\[
+\sum_{\nu} F_{\mu\nu} C_{\nu i} = \epsilon_i \sum_{\nu} S_{\mu\nu} C_{\nu i}
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(F_{\mu\nu}\)</span>: Fock matrix element</p></li>
+<li><p><span class="math notranslate nohighlight">\(S_{\mu\nu}\)</span>: Overlap matrix element</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_{\nu i}\)</span>: Molecular orbital coefficient</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon_i\)</span>: Orbital energy</p></li>
+</ul>
+</section>
+</section>
+<section id="initial-guess">
+<h2>2. Initial Guess<a class="headerlink" href="#initial-guess" title="Link to this heading"></a></h2>
+<p>The Hartree-Fock equations are solved iteratively through the Self-Consistent Field (SCF) procedure, which requires an initial guess for the molecular orbital coefficients. The quality of this initial guess matters significantly for three reasons:</p>
+<ul class="simple">
+<li><p><strong>Convergence</strong>: A good guess reduces the number of SCF iterations</p></li>
+<li><p><strong>Stability</strong>: A poor guess may lead to convergence to a local minimum</p></li>
+<li><p><strong>Performance</strong>: Some guesses work better for specific systems (e.g., transition metals)</p></li>
+</ul>
+<section id="naive-initial-guess-methods">
+<h3>Naive Initial Guess Methods<a class="headerlink" href="#naive-initial-guess-methods" title="Link to this heading"></a></h3>
+<p>These methods are computationally inexpensive and easy to implement, but often yield poor convergence or converge to local minima. <strong>Thus, this project implements only the naive initial guess approaches</strong> (Core Hamiltonian, Hückel, and Extended Hückel) as described below.</p>
+<section id="core-hamiltonian-guess">
+<h4>2.1 Core Hamiltonian Guess<a class="headerlink" href="#core-hamiltonian-guess" title="Link to this heading"></a></h4>
+<p>The simplest <em>ab initio</em> guess. It neglects all electron–electron repulsion and uses only one‑electron terms.</p>
+<p><strong>Procedure</strong>:</p>
+<ol class="arabic simple">
+<li><p>Compute the core Hamiltonian matrix<br />
+<span class="math notranslate nohighlight">\(\mathbf{H}_{\text{core}} = \mathbf{T} + \mathbf{V}_{\text{ne}}\)</span>, where<br />
+<span class="math notranslate nohighlight">\(\mathbf{T}\)</span> = kinetic energy, <span class="math notranslate nohighlight">\(\mathbf{V}_{\text{ne}}\)</span> = nuclear attraction.</p></li>
+<li><p>Solve the generalized eigenvalue problem<br />
+<span class="math notranslate nohighlight">\(\mathbf{H}_{\text{core}} \mathbf{C} = \mathbf{S} \mathbf{C} \epsilon\)</span>.</p></li>
+<li><p>Use the resulting coefficients <span class="math notranslate nohighlight">\(\mathbf{C}\)</span> as the initial MO guess.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>Note</strong>: This guess is very crude. It contains no electron‑electron repulsion, so it often fails for metals, small gap systems, or when SCF is near instabilities.</p>
+</div></blockquote>
+</section>
+<section id="simple-huckel-guess-noniterative">
+<h4>2.2 Simple Hückel Guess (Non‑iterative)<a class="headerlink" href="#simple-huckel-guess-noniterative" title="Link to this heading"></a></h4>
+<p>A semi‑empirical π‑electron method. Not commonly used as a standalone HF initial guess today, but historically relevant.</p>
+<p><strong>Form</strong> (for planar π systems):</p>
+<ul class="simple">
+<li><p>Set <span class="math notranslate nohighlight">\(\mathbf{H}_{ii} = \alpha\)</span>, <span class="math notranslate nohighlight">\(\mathbf{H}_{ij} = \beta\)</span> (if bonded)</p></li>
+<li><p>Solve <span class="math notranslate nohighlight">\(\mathbf{H}^{\text{Hückel}} \mathbf{C} = \mathbf{S}^{\text{Hückel}} \mathbf{C} \epsilon\)</span><br />
+(often <span class="math notranslate nohighlight">\(\mathbf{S} = \mathbf{I}\)</span> is assumed)</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Limitation</strong>: Only π electrons, empirical parameters, not suitable for general HF initial guesses.</p>
+</div></blockquote>
+</section>
+<section id="extended-huckel-guess-eht">
+<h4>2.3 Extended Hückel Guess (EHT)<a class="headerlink" href="#extended-huckel-guess-eht" title="Link to this heading"></a></h4>
+<p>Uses empirical atom‑specific parameters (<span class="math notranslate nohighlight">\(H_{ii}\)</span> = valence orbital ionization energy) and a distance‑dependent off‑diagonal term (e.g., Wolfsberg–Helmholz formula).</p>
+<p><strong>Features</strong>:</p>
+<ul class="simple">
+<li><p>Includes all valence electrons.</p></li>
+<li><p>Constructs a modified <span class="math notranslate nohighlight">\(\mathbf{H}^{\text{EHT}}\)</span>, then solves <span class="math notranslate nohighlight">\(\mathbf{H}^{\text{EHT}} \mathbf{C} = \mathbf{S} \mathbf{C} \epsilon\)</span>.</p></li>
+<li><p>Provides a much better initial guess than the core Hamiltonian, especially for <strong>organic molecules</strong> and transition metal complexes.</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Advantage over core guess</strong>: It mimics some effective potential via empirical data, reducing SCF oscillations. Many modern codes (e.g., ORCA, XTB) use variants of EHT‑like guesses as default.</p>
+</div></blockquote>
+<div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin: 16px 0;">
+  <div style="background: #f1f5f9; padding: 12px 20px; border-bottom: 1px solid #e2e8f0;">
+    <strong style="color: #1e293b;">📋 Advanced Initial Guess</strong>
+  </div>
+  <div style="padding: 16px 20px;">
+    <ul style="margin: 0; padding-left: 20px; color: #334155;">
+      <li style="margin: 8px 0;"><strong>SAD (Superposition of Atomic Densities)</strong>: Constructs the initial density matrix by superimposing spherically averaged atomic densities. Significantly better than the core Hamiltonian guess, especially for large basis sets and large molecules. Default guess in Q-Chem.</li>
+      <li style="margin: 8px 0;"><strong>Harris</strong>: Diagonalizes the Harris functional to obtain the initial guess. Default option for HF and DFT calculations in Gaussian.</li>
+      <li style="margin: 8px 0;"><strong>MINAO (Minimum Basis Atomic Orbitals)</strong>: Builds the initial guess using a minimum basis set of atomic orbitals. Often serves as the underlying construction for other advanced guesses (e.g., SAD). <i>Widely used in ORCA and PySCF.</li>
+    </ul>
+  </div>
+</div>
+</section>
+</section>
+</section>
+<section id="restricted-hartree-fock-rhf">
+<h2>3. Restricted Hartree-Fock (RHF)<a class="headerlink" href="#restricted-hartree-fock-rhf" title="Link to this heading"></a></h2>
+<p>RHF is used for <strong>closed-shell systems</strong> where all electrons are paired (even number of electrons, singlet spin state).</p>
+<section id="key-features-of-rhf">
+<h3>Key Features of RHF<a class="headerlink" href="#key-features-of-rhf" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Spin Restriction</strong>: <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> spin orbitals share the same spatial part:</p>
+<div class="math notranslate nohighlight">
+\[
+   \phi_i^{\alpha}(\mathbf{r}, \sigma) = \psi_i(\mathbf{r}) \alpha(\sigma)
+   \]</div>
+<div class="math notranslate nohighlight">
+\[
+   \phi_i^{\beta}(\mathbf{r}, \sigma) = \psi_i(\mathbf{r}) \beta(\sigma)
+   \]</div>
+</li>
+<li><p><strong>Density Matrix</strong>: A single density matrix describes both spins:</p>
+<div class="math notranslate nohighlight">
+\[
+   P_{\mu\nu} = 2 \sum_{i=1}^{N/2} C_{\mu i} C_{\nu i}^*
+   \]</div>
+</li>
+<li><p><strong>Fock Matrix</strong>: Simplified due to spin restriction:</p>
+<div class="math notranslate nohighlight">
+\[
+   F_{\mu\nu} = H_{\mu\nu}^{core} + \sum_{\lambda\sigma} P_{\lambda\sigma} \left[ (\mu\nu|\lambda\sigma) - \frac{1}{2} (\mu\lambda|\nu\sigma) \right]
+   \]</div>
+</li>
+</ol>
+</section>
+<section id="rhf-scf-algorithm">
+<h3>RHF SCF Algorithm<a class="headerlink" href="#rhf-scf-algorithm" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Initialize</strong>: Compute integrals and form initial guess for <span class="math notranslate nohighlight">\(\mathbf{C}\)</span></p></li>
+<li><p><strong>Build Density</strong>: <span class="math notranslate nohighlight">\(P_{\mu\nu} = 2 \sum_{i=1}^{N/2} C_{\mu i} C_{\nu i}^*\)</span></p></li>
+<li><p><strong>Build Fock Matrix</strong>: <span class="math notranslate nohighlight">\(\mathbf{F} = \mathbf{H}_{core} + \mathbf{J} - \frac{1}{2}\mathbf{K}\)</span></p></li>
+<li><p><strong>Solve Roothaan Equations</strong>: <span class="math notranslate nohighlight">\(\mathbf{F} \mathbf{C} = \mathbf{S} \mathbf{C} \mathbf{\epsilon}\)</span></p></li>
+<li><p><strong>Compute New Density</strong>: <span class="math notranslate nohighlight">\(\mathbf{P}^{new}\)</span> from new <span class="math notranslate nohighlight">\(\mathbf{C}\)</span></p></li>
+<li><p><strong>Check Convergence</strong>: Compare <span class="math notranslate nohighlight">\(\mathbf{P}^{new}\)</span> with <span class="math notranslate nohighlight">\(\mathbf{P}^{old}\)</span></p></li>
+<li><p><strong>Iterate</strong>: Repeat until convergence</p></li>
+</ol>
+</section>
+<section id="convergence-criteria">
+<h3>Convergence Criteria<a class="headerlink" href="#convergence-criteria" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Density convergence</strong>: <span class="math notranslate nohighlight">\(||\mathbf{P}^{new} - \mathbf{P}^{old}|| &lt; 10^{-8}\)</span></p></li>
+<li><p><strong>Energy convergence</strong>: <span class="math notranslate nohighlight">\(|E^{new} - E^{old}| &lt; 10^{-10}\)</span> Hartree</p></li>
+<li><p><strong>Maximum iterations</strong>: Typically 50-200</p></li>
+</ul>
+</section>
+</section>
+<section id="unrestricted-hartree-fock-uhf">
+<h2>4. Unrestricted Hartree-Fock (UHF)<a class="headerlink" href="#unrestricted-hartree-fock-uhf" title="Link to this heading"></a></h2>
+<p>UHF is used for <strong>open-shell systems</strong> where electrons are not all paired (odd number of electrons or triplet states).</p>
+<section id="key-features-of-uhf">
+<h3>Key Features of UHF<a class="headerlink" href="#key-features-of-uhf" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Spin Unrestriction</strong>: <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> spin orbitals have different spatial parts:</p>
+<div class="math notranslate nohighlight">
+\[
+   \phi_i^{\alpha}(\mathbf{r}, \sigma) = \psi_i^{\alpha}(\mathbf{r}) \alpha(\sigma)
+   \]</div>
+<div class="math notranslate nohighlight">
+\[
+   \phi_i^{\beta}(\mathbf{r}, \sigma) = \psi_i^{\beta}(\mathbf{r}) \beta(\sigma)
+   \]</div>
+</li>
+<li><p><strong>Separate Density Matrices</strong>: One for each spin:</p>
+<div class="math notranslate nohighlight">
+\[
+   P_{\mu\nu}^{\alpha} = \sum_{i=1}^{N_{\alpha}} C_{\mu i}^{\alpha} C_{\nu i}^{\alpha *}
+   \]</div>
+<div class="math notranslate nohighlight">
+\[
+   P_{\mu\nu}^{\beta} = \sum_{i=1}^{N_{\beta}} C_{\mu i}^{\beta} C_{\nu i}^{\beta *}
+   \]</div>
+</li>
+<li><p><strong>Separate Fock Matrices</strong>: One for each spin:</p>
+<div class="math notranslate nohighlight">
+\[
+   F_{\mu\nu}^{\alpha} = H_{\mu\nu}^{core} + \sum_{\lambda\sigma} (P_{\lambda\sigma}^{\alpha} + P_{\lambda\sigma}^{\beta}) (\mu\nu|\lambda\sigma) - \sum_{\lambda\sigma} P_{\lambda\sigma}^{\alpha} (\mu\lambda|\nu\sigma)
+   \]</div>
+<div class="math notranslate nohighlight">
+\[
+   F_{\mu\nu}^{\beta} = H_{\mu\nu}^{core} + \sum_{\lambda\sigma} (P_{\lambda\sigma}^{\alpha} + P_{\lambda\sigma}^{\beta}) (\mu\nu|\lambda\sigma) - \sum_{\lambda\sigma} P_{\lambda\sigma}^{\beta} (\mu\lambda|\nu\sigma)
+   \]</div>
+</li>
+</ol>
+</section>
+<section id="uhf-vs-rhf">
+<h3>UHF vs RHF<a class="headerlink" href="#uhf-vs-rhf" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>RHF</p></th>
+<th class="head"><p>UHF</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Spin Restriction</p></td>
+<td><p><span class="math notranslate nohighlight">\(\alpha=\beta\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\alpha\neq\beta\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Density Matrices</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>Fock Matrices</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Applicable System</p></td>
+<td><p>Closed-Shell</p></td>
+<td><p>Open-Shell</p></td>
+</tr>
+<tr class="row-even"><td><p>Spin Contamination</p></td>
+<td><p>None</p></td>
+<td><p>May occur</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="spin-contamination">
+<h3>Spin Contamination<a class="headerlink" href="#spin-contamination" title="Link to this heading"></a></h3>
+<p>UHF wavefunctions can be contaminated with higher spin states:</p>
+<div class="math notranslate nohighlight">
+\[
+\langle S^2 \rangle = S(S+1) + \delta S
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\delta S &gt; 0\)</span> is the spin contamination.</p>
+</section>
+</section>
+<section id="restricted-open-shell-hartree-fock-rohf">
+<h2>5. Restricted Open-shell Hartree-Fock (ROHF)<a class="headerlink" href="#restricted-open-shell-hartree-fock-rohf" title="Link to this heading"></a></h2>
+<p>ROHF is a compromise between RHF and UHF for open-shell systems.</p>
+<section id="key-features-of-rohf">
+<h3>Key Features of ROHF<a class="headerlink" href="#key-features-of-rohf" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Partial Spin Restriction</strong>: Core orbitals are doubly occupied with same spatial function, virtual orbitals are unoccupied. Only the open-shell orbitals have different <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> occupation.</p></li>
+<li><p><strong>Avoids Spin Contamination</strong>: Maintains spatial symmetry while handling open-shell character.</p></li>
+<li><p><strong>More Complex Equations</strong>: Requires separate treatment of core, open-shell, and virtual orbitals.</p></li>
+</ol>
+</section>
+<section id="rohf-energy-expression">
+<h3>ROHF Energy Expression<a class="headerlink" href="#rohf-energy-expression" title="Link to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\[
+E_{ROHF} = \sum_{i}^{core} 2 \langle \psi_i | \hat{h} | \psi_i \rangle + \sum_{i}^{open} \langle \psi_i^{\alpha} | \hat{h} | \psi_i^{\alpha} \rangle + \sum_{i}^{open} \langle \psi_i^{\beta} | \hat{h} | \psi_i^{\beta} \rangle
+\]</div>
+<p>plus Coulomb and exchange terms.</p>
+</section>
+<section id="when-to-use-rohf">
+<h3>When to Use ROHF<a class="headerlink" href="#when-to-use-rohf" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Open-shell systems where spin contamination is a concern</p></li>
+<li><p>Systems with high symmetry</p></li>
+<li><p>Transition metal complexes with unpaired electrons</p></li>
+</ul>
+</section>
+</section>
+<section id="generalized-hartree-fock-ghf">
+<h2>6. Generalized Hartree-Fock (GHF)<a class="headerlink" href="#generalized-hartree-fock-ghf" title="Link to this heading"></a></h2>
+<p>GHF is the most general form of Hartree-Fock theory.</p>
+<section id="key-features-of-ghf">
+<h3>Key Features of GHF<a class="headerlink" href="#key-features-of-ghf" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>No Spin Restrictions</strong>: Orbitals can be arbitrary linear combinations of <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> spins:</p>
+<div class="math notranslate nohighlight">
+\[
+   \phi_i(\mathbf{r}, \sigma) = \psi_i^{\alpha}(\mathbf{r}) \alpha(\sigma) + \psi_i^{\beta}(\mathbf{r}) \beta(\sigma)
+   \]</div>
+</li>
+<li><p><strong>Complex Orbitals</strong>: GHF orbitals are generally complex-valued.</p></li>
+<li><p><strong>Most Flexible</strong>: Can describe any spin state.</p></li>
+</ol>
+</section>
+<section id="ghf-density-matrix">
+<h3>GHF Density Matrix<a class="headerlink" href="#ghf-density-matrix" title="Link to this heading"></a></h3>
+<p>The density matrix becomes a 2x2 matrix in spin space:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{P} = \begin{pmatrix}
+\mathbf{P}^{\alpha\alpha} &amp; \mathbf{P}^{\alpha\beta} \\
+\mathbf{P}^{\beta\alpha} &amp; \mathbf{P}^{\beta\beta}
+\end{pmatrix}
+\end{split}\]</div>
+</section>
+<section id="when-to-use-ghf">
+<h3>When to Use GHF<a class="headerlink" href="#when-to-use-ghf" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Systems with strong spin-orbit coupling</p></li>
+<li><p>Systems where spatial symmetry is broken</p></li>
+<li><p>Theoretical studies of spin dynamics</p></li>
+</ul>
+</section>
+<section id="drawbacks-of-ghf">
+<h3>Drawbacks of GHF<a class="headerlink" href="#drawbacks-of-ghf" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Computationally more expensive</p></li>
+<li><p>Complex-valued orbitals</p></li>
+<li><p>Less commonly implemented</p></li>
+</ul>
+</section>
+</section>
+<section id="practical-examples-with-minihf">
+<h2>7. Practical Examples with MiniHF<a class="headerlink" href="#practical-examples-with-minihf" title="Link to this heading"></a></h2>
+<p>Let’s demonstrate the Hartree-Fock solver in MiniHF with practical examples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import required modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.basis</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasisSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hamiltonian</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.scf.hf_solver</span><span class="w"> </span><span class="kn">import</span> <span class="n">HFSolver</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example 1: RHF calculation for water (closed-shell)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- RHF Calculation: Water Molecule ---&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create water molecule</span>
+<span class="n">h2o_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;O 0.0, 0.0, 0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;H 0.0, -0.757, 0.587&#39;</span><span class="p">,</span> <span class="s1">&#39;H 0.0, 0.757, 0.587&#39;</span><span class="p">]</span>
+<span class="n">h2o</span> <span class="o">=</span> <span class="n">Molecule</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">h2o_atoms</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Build basis set</span>
+<span class="n">h2o_basis</span> <span class="o">=</span> <span class="n">BasisSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">h2o</span><span class="p">,</span> <span class="s1">&#39;sto-3g.nwchem&#39;</span><span class="p">)</span>
+
+<span class="c1"># Build Hamiltonian</span>
+<span class="n">h2o_ham</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">h2o</span><span class="p">,</span> <span class="n">h2o_basis</span><span class="p">)</span>
+
+<span class="c1"># Create HF solver and run RHF</span>
+<span class="n">hf_solver</span> <span class="o">=</span> <span class="n">HFSolver</span><span class="p">(</span><span class="n">h2o_ham</span><span class="p">)</span>
+<span class="n">rhf_results</span> <span class="o">=</span> <span class="n">hf_solver</span><span class="o">.</span><span class="n">rhf</span><span class="p">()</span>
+
+<span class="c1"># Print results</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Molecule: Water (H2O)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Basis set: STO-3G&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of basis functions: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">h2o_basis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total energy: </span><span class="si">{</span><span class="n">rhf_results</span><span class="p">[</span><span class="s1">&#39;energy_total&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Electronic energy: </span><span class="si">{</span><span class="n">rhf_results</span><span class="p">[</span><span class="s1">&#39;energy_elec&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nuclear repulsion: </span><span class="si">{</span><span class="n">rhf_results</span><span class="p">[</span><span class="s1">&#39;energy_nuc&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+
+<span class="c1"># Print orbital energies</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Molecular orbital energies (eV):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">energy</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rhf_results</span><span class="p">[</span><span class="s1">&#39;mo_energy&#39;</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  MO </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">energy</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">27.2114</span><span class="si">:</span><span class="s2">&gt;8.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">)</span>
+
+<span class="c1"># HOMO-LUMO gap</span>
+<span class="n">homo_idx</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># Water has 10 electrons = 5 occupied MOs (0-indexed: 0-4)</span>
+<span class="n">homo_energy</span> <span class="o">=</span> <span class="n">rhf_results</span><span class="p">[</span><span class="s1">&#39;mo_energy&#39;</span><span class="p">][</span><span class="n">homo_idx</span><span class="p">]</span> <span class="o">*</span> <span class="mf">27.2114</span>
+<span class="n">lumo_energy</span> <span class="o">=</span> <span class="n">rhf_results</span><span class="p">[</span><span class="s1">&#39;mo_energy&#39;</span><span class="p">][</span><span class="n">homo_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">27.2114</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">HOMO energy: </span><span class="si">{</span><span class="n">homo_energy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LUMO energy: </span><span class="si">{</span><span class="n">lumo_energy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HOMO-LUMO gap: </span><span class="si">{</span><span class="n">lumo_energy</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">homo_energy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--- RHF Calculation: Water Molecule ---
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Molecule: Water (H2O)
+Basis set: STO-3G
+Number of basis functions: 7
+
+Total energy: -73.218632 Hartree
+Electronic energy: -90.581924 Hartree
+Nuclear repulsion: 17.363292 Hartree
+
+Molecular orbital energies (eV):
+  MO 1: -556.8357 eV
+  MO 2: -45.9198 eV
+  MO 3: -25.6964 eV
+  MO 4: -15.9000 eV
+  MO 5: -14.8850 eV
+  MO 6:  26.9861 eV
+  MO 7:  40.8066 eV
+
+HOMO energy: -14.8850 eV
+LUMO energy: 26.9861 eV
+HOMO-LUMO gap: 41.8711 eV
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example 2: UHF calculation for methyl radical (open-shell)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- UHF Calculation: Methyl Radical ---&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create methyl radical (CH3)</span>
+<span class="n">ch3_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;C 0.0, 0.0, 0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;H 0.629, 0.629, 0.629&#39;</span><span class="p">,</span> <span class="s1">&#39;H -0.629, -0.629, 0.629&#39;</span><span class="p">,</span> <span class="s1">&#39;H -0.629, 0.629, -0.629&#39;</span><span class="p">]</span>
+<span class="n">ch3</span> <span class="o">=</span> <span class="n">Molecule</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ch3_atoms</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Doublet state</span>
+
+<span class="c1"># Build basis set</span>
+<span class="n">ch3_basis</span> <span class="o">=</span> <span class="n">BasisSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">ch3</span><span class="p">,</span> <span class="s1">&#39;sto-3g.nwchem&#39;</span><span class="p">)</span>
+
+<span class="c1"># Build Hamiltonian</span>
+<span class="n">ch3_ham</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">ch3</span><span class="p">,</span> <span class="n">ch3_basis</span><span class="p">)</span>
+
+<span class="c1"># Create HF solver and run UHF</span>
+<span class="n">hf_solver</span> <span class="o">=</span> <span class="n">HFSolver</span><span class="p">(</span><span class="n">ch3_ham</span><span class="p">)</span>
+<span class="n">uhf_results</span> <span class="o">=</span> <span class="n">hf_solver</span><span class="o">.</span><span class="n">uhf</span><span class="p">()</span>
+
+<span class="c1"># Print results</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Molecule: Methyl Radical (CH3)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Basis set: STO-3G&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multiplicity: </span><span class="si">{</span><span class="n">ch3</span><span class="o">.</span><span class="n">multiplicity</span><span class="si">}</span><span class="s2"> (doublet)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of basis functions: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ch3_basis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total energy: </span><span class="si">{</span><span class="n">uhf_results</span><span class="p">[</span><span class="s1">&#39;energy_total&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Electronic energy: </span><span class="si">{</span><span class="n">uhf_results</span><span class="p">[</span><span class="s1">&#39;energy_elec&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nuclear repulsion: </span><span class="si">{</span><span class="n">uhf_results</span><span class="p">[</span><span class="s1">&#39;energy_nuc&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Hartree&quot;</span><span class="p">)</span>
+
+<span class="c1"># Compare alpha and beta orbital energies</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Orbital energies (eV):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;MO&#39;</span><span class="si">:</span><span class="s2">&lt;5</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Alpha&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Beta&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Difference&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">45</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">e_alpha</span><span class="p">,</span> <span class="n">e_beta</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">uhf_results</span><span class="p">[</span><span class="s1">&#39;mo_energy&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">uhf_results</span><span class="p">[</span><span class="s1">&#39;mo_energy&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])):</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">e_alpha</span> <span class="o">-</span> <span class="n">e_beta</span><span class="p">)</span> <span class="o">*</span> <span class="mf">27.2114</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">&lt;5</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">e_alpha</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">27.2114</span><span class="si">:</span><span class="s2">&lt;12.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">e_beta</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">27.2114</span><span class="si">:</span><span class="s2">&lt;12.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">diff</span><span class="si">:</span><span class="s2">&lt;12.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check spin contamination</span>
+<span class="k">if</span> <span class="s1">&#39;s_squared&#39;</span> <span class="ow">in</span> <span class="n">uhf_results</span><span class="p">:</span>
+    <span class="n">s_squared</span> <span class="o">=</span> <span class="n">uhf_results</span><span class="p">[</span><span class="s1">&#39;s_squared&#39;</span><span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">(</span><span class="n">ch3</span><span class="o">.</span><span class="n">multiplicity</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">ch3</span><span class="o">.</span><span class="n">multiplicity</span> <span class="o">/</span> <span class="mi">4</span>  <span class="c1"># S(S+1) for doublet = 0.75</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;S^2&gt; = </span><span class="si">{</span><span class="n">s_squared</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected = </span><span class="si">{</span><span class="n">expected</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spin contamination = </span><span class="si">{</span><span class="n">s_squared</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">expected</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--- UHF Calculation: Methyl Radical ---
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Molecule: Methyl Radical (CH3)
+Basis set: STO-3G
+Multiplicity: 2 (doublet)
+Number of basis functions: 8
+
+Total energy: -37.146975 Hartree
+Electronic energy: -55.355186 Hartree
+Nuclear repulsion: 18.208211 Hartree
+
+Orbital energies (eV):
+MO    Alpha        Beta         Difference  
+---------------------------------------------
+1     -311.4240    -310.6645    -0.7594     
+2     -34.2493     -32.0569     -2.1924     
+3     -22.5441     -21.5784     -0.9657     
+4     -22.5441     -21.5784     -0.9657     
+5     -16.0028     3.3759       -19.3788    
+6     39.3965      40.4194      -1.0229     
+7     39.3965      40.4194      -1.0229     
+8     51.8817      53.5871      -1.7053     
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="summary">
+<h2>8. Summary<a class="headerlink" href="#summary" title="Link to this heading"></a></h2>
+<p>In this notebook, we’ve covered the main variants of the Hartree-Fock method:</p>
+<section id="method-comparison">
+<h3>Method Comparison<a class="headerlink" href="#method-comparison" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Best For</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>RHF</strong></p></td>
+<td><p>Restricted Hartree-Fock</p></td>
+<td><p>Closed-shell systems (even electrons, singlet)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>UHF</strong></p></td>
+<td><p>Unrestricted Hartree-Fock</p></td>
+<td><p>Open-shell systems (odd electrons, triplets)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>ROHF</strong></p></td>
+<td><p>Restricted Open-shell HF</p></td>
+<td><p>Open-shell systems with symmetry constraints</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>GHF</strong></p></td>
+<td><p>Generalized Hartree-Fock</p></td>
+<td><p>Systems with strong spin-orbit coupling</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="key-takeaways">
+<h3>Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>SCF Procedure</strong>: HF equations are solved iteratively until self-consistency</p></li>
+<li><p><strong>Initial Guess</strong>: Important for convergence; core Hamiltonian guess is common</p></li>
+<li><p><strong>RHF</strong>: Most efficient for closed-shell systems</p></li>
+<li><p><strong>UHF</strong>: Handles open-shell but may have spin contamination</p></li>
+<li><p><strong>ROHF</strong>: Balances symmetry and open-shell treatment</p></li>
+<li><p><strong>GHF</strong>: Most general but computationally expensive</p></li>
+</ol>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="integral.html" class="btn btn-neutral float-left" title="Molecular Integrals in MiniHF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/modules.html" class="btn btn-neutral float-right" title="minihf" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

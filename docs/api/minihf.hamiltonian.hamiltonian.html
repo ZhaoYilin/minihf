@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>minihf.hamiltonian.hamiltonian module &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+
+  
+    <link rel="shortcut icon" href="../_static/logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="minihf.molecule package" href="minihf.molecule.html" />
+    <link rel="prev" title="minihf.hamiltonian.auxiliary module" href="minihf.hamiltonian.auxiliary.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start with MiniHF</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../integral.html">Molecular Integrals in MiniHF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hf.html">Hartree-Fock Method</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">minihf</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="minihf.html">minihf package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="minihf.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="minihf.basis.html">minihf.basis package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="minihf.hamiltonian.html">minihf.hamiltonian package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="minihf.molecule.html">minihf.molecule package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="minihf.scf.html">minihf.scf package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="minihf.html#module-minihf">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">minihf</a></li>
+          <li class="breadcrumb-item"><a href="minihf.html">minihf package</a></li>
+          <li class="breadcrumb-item"><a href="minihf.hamiltonian.html">minihf.hamiltonian package</a></li>
+      <li class="breadcrumb-item active">minihf.hamiltonian.hamiltonian module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/minihf.hamiltonian.hamiltonian.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-minihf.hamiltonian.hamiltonian">
+<span id="minihf-hamiltonian-hamiltonian-module"></span><h1>minihf.hamiltonian.hamiltonian module<a class="headerlink" href="#module-minihf.hamiltonian.hamiltonian" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">minihf.hamiltonian.hamiltonian.</span></span><span class="sig-name descname"><span class="pre">Hamiltonian</span></span><a class="reference internal" href="../_modules/minihf/hamiltonian/hamiltonian.html#Hamiltonian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<p>Chemical Hamiltonian for a Schrodinger equation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nspatial</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the Hamiltonian.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian.assign_operators">
+<span class="sig-name descname"><span class="pre">assign_operators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian.assign_operators" title="Link to this definition"></a></dt>
+<dd><p>Assigns operator integral to the Hamiltonian.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian.ClassMethods">
+<span class="sig-name descname"><span class="pre">ClassMethods</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian.ClassMethods" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">------------</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molecule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/hamiltonian.html#Hamiltonian.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian.build" title="Link to this definition"></a></dt>
+<dd><p>Build the Chemical Hamiltonian</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/hamiltonian.html#Hamiltonian.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Build the chemical hamiltonian.</p>
+<section id="parmeters">
+<h2>Parmeters<a class="headerlink" href="#parmeters" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>mol<span class="classifier">Molecule</span></dt><dd><p>Instance of Molecule.</p>
+</dd>
+<dt>orb<span class="classifier">BasisSet</span></dt><dd><p>Instance of BasisSet.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian.build_overlap">
+<span class="sig-name descname"><span class="pre">build_overlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/hamiltonian.html#Hamiltonian.build_overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian.build_overlap" title="Link to this definition"></a></dt>
+<dd><p>Build the overlap integral matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>basis_set</strong> (<a class="reference internal" href="minihf.basis.basis_set.html#minihf.basis.basis_set.BasisSet" title="minihf.basis.basis_set.BasisSet"><em>BasisSet</em></a>) – Hatree Fock basis set instance.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If basis_set parameter is not a BasisSet instance.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>S_matrix</strong> – Return the overlap integral matrix.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian.build_kinetic">
+<span class="sig-name descname"><span class="pre">build_kinetic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/hamiltonian.html#Hamiltonian.build_kinetic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian.build_kinetic" title="Link to this definition"></a></dt>
+<dd><p>Build the kinetic integral matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>basis_set</strong> (<a class="reference internal" href="minihf.basis.basis_set.html#minihf.basis.basis_set.BasisSet" title="minihf.basis.basis_set.BasisSet"><em>BasisSet</em></a>) – Hatree Fock basis set instance.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If basis_set parameter is not a BasisSet instance.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T_matrix</strong> – Return the kinetic integral matrix.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian.build_nuclear_attraction">
+<span class="sig-name descname"><span class="pre">build_nuclear_attraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">molecule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/hamiltonian.html#Hamiltonian.build_nuclear_attraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian.build_nuclear_attraction" title="Link to this definition"></a></dt>
+<dd><p>Build the nuclear repulsion operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>basis_set</strong> (<a class="reference internal" href="minihf.basis.basis_set.html#minihf.basis.basis_set.BasisSet" title="minihf.basis.basis_set.BasisSet"><em>BasisSet</em></a>) – Hatree Fock basis set instance.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If basis_set parameter is not a BasisSet instance.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>operator</strong> – Return an operator instance.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="minihf.hamiltonian.integral.kinetic.html#minihf.hamiltonian.integral.kinetic.Kinetic" title="minihf.hamiltonian.integral.kinetic.Kinetic">Kinetic</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="minihf.hamiltonian.hamiltonian.Hamiltonian.build_electron_repulsion">
+<span class="sig-name descname"><span class="pre">build_electron_repulsion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/minihf/hamiltonian/hamiltonian.html#Hamiltonian.build_electron_repulsion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minihf.hamiltonian.hamiltonian.Hamiltonian.build_electron_repulsion" title="Link to this definition"></a></dt>
+<dd><p>Build the electron repulsion integral matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>basis_set</strong> (<a class="reference internal" href="minihf.basis.basis_set.html#minihf.basis.basis_set.BasisSet" title="minihf.basis.basis_set.BasisSet"><em>BasisSet</em></a>) – Hatree Fock basis set instance.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If basis_set parameter is not a BasisSet instance.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Eri_matrix</strong> – Return the electron repulsion integral matrix.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="minihf.hamiltonian.auxiliary.html" class="btn btn-neutral float-left" title="minihf.hamiltonian.auxiliary module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="minihf.molecule.html" class="btn btn-neutral float-right" title="minihf.molecule package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

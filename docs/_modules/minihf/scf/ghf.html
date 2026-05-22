@@ -1,0 +1,293 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>minihf.scf.ghf &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/logo.ico"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start with MiniHF</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../integral.html">Molecular Integrals in MiniHF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hf.html">Hartree-Fock Method</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">minihf</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">minihf.scf.ghf</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for minihf.scf.ghf</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+ 
+<div class="viewcode-block" id="ghf">
+<a class="viewcode-back" href="../../../api/minihf.scf.ghf.html#minihf.scf.ghf.ghf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ghf</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">Hcore</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">nalpha</span><span class="p">,</span> <span class="n">nbeta</span><span class="p">,</span> <span class="n">energy_nuc</span><span class="p">,</span> <span class="n">I_thld</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">E_thld</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">D_thld</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generalized Hartree-Fock (GHF) algorithm for non-collinear spin systems.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    S: np.ndarray</span>
+<span class="sd">        Overlap matrix.</span>
+<span class="sd">    Hcore: np.ndarray</span>
+<span class="sd">        Core Hamiltonian matrix.</span>
+<span class="sd">    Eri: np.ndarray</span>
+<span class="sd">        Electron repulsion integrals (in chemists&#39; notation, aosym=&#39;s8&#39;).</span>
+<span class="sd">    nalpha: int</span>
+<span class="sd">        Number of spin alpha electrons.</span>
+<span class="sd">    nbeta: int</span>
+<span class="sd">        Number of spin beta electrons.</span>
+<span class="sd">    energy_nuc: float</span>
+<span class="sd">        Nuclear repulsion energy.</span>
+<span class="sd">    I_thld: int</span>
+<span class="sd">        Maximum number of iterations.</span>
+<span class="sd">    E_thld: float</span>
+<span class="sd">        Threshold for energy convergence.</span>
+<span class="sd">    D_thld: float</span>
+<span class="sd">        Threshold for density matrix convergence.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : dict</span>
+<span class="sd">        Hartree Fock calculation results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nbf</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nbf</span>
+    <span class="n">nelec</span> <span class="o">=</span> <span class="n">nalpha</span> <span class="o">+</span> <span class="n">nbeta</span>
+
+    <span class="c1"># Build orthogonalization matrix for GHF (block-diagonal)</span>
+    <span class="n">eigval</span><span class="p">,</span> <span class="n">eigvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">eigvec</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">eigval</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">))</span> <span class="o">@</span> <span class="n">eigvec</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">X_ghf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">X</span><span class="p">)</span>
+
+    <span class="c1"># Extended Hückel Theory (EHT) initial guess for GHF</span>
+    <span class="c1"># Wolfsberg-Helmholtz approximation: F_ij = 0.5 * K * S_ij * (H_ii + H_jj)</span>
+    <span class="n">Hdiag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">Hcore</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="mf">1.75</span>  <span class="c1"># Wolfsberg-Helmholtz constant</span>
+    <span class="n">F_eht</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">K</span> <span class="o">*</span> <span class="n">S</span> <span class="o">*</span> <span class="p">(</span><span class="n">Hdiag</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">Hdiag</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">F_eht</span><span class="p">,</span> <span class="n">Hdiag</span><span class="p">)</span>  <span class="c1"># Diagonal elements are H_ii</span>
+    
+    <span class="c1"># Build GHF Fock matrix with spin mixing for true GHF</span>
+    <span class="c1"># Introduce off-diagonal spin blocks to break UHF symmetry</span>
+    <span class="n">F_eht_ghf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n2</span><span class="p">,</span> <span class="n">n2</span><span class="p">))</span>
+    <span class="n">F_eht_ghf</span><span class="p">[:</span><span class="n">nbf</span><span class="p">,</span> <span class="p">:</span><span class="n">nbf</span><span class="p">]</span> <span class="o">=</span> <span class="n">F_eht</span>
+    <span class="n">F_eht_ghf</span><span class="p">[</span><span class="n">nbf</span><span class="p">:,</span> <span class="n">nbf</span><span class="p">:]</span> <span class="o">=</span> <span class="n">F_eht</span>
+    
+    <span class="c1"># Add small spin-orbit mixing term to break symmetry</span>
+    <span class="c1"># This is crucial for getting true GHF solutions (not UHF)</span>
+    <span class="n">mixing_factor</span> <span class="o">=</span> <span class="mf">1e-3</span>
+    <span class="n">F_eht_ghf</span><span class="p">[:</span><span class="n">nbf</span><span class="p">,</span> <span class="n">nbf</span><span class="p">:]</span> <span class="o">=</span> <span class="n">mixing_factor</span> <span class="o">*</span> <span class="n">F_eht</span>
+    <span class="n">F_eht_ghf</span><span class="p">[</span><span class="n">nbf</span><span class="p">:,</span> <span class="p">:</span><span class="n">nbf</span><span class="p">]</span> <span class="o">=</span> <span class="n">mixing_factor</span> <span class="o">*</span> <span class="n">F_eht</span>
+    
+    <span class="n">F_ortho</span> <span class="o">=</span> <span class="n">X_ghf</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">F_eht_ghf</span> <span class="o">@</span> <span class="n">X_ghf</span>
+    <span class="n">eps</span><span class="p">,</span> <span class="n">C_ortho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">F_ortho</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">X_ghf</span> <span class="o">@</span> <span class="n">C_ortho</span>
+
+    <span class="c1"># Initial density matrix (occupy lowest nelec orbitals)</span>
+    <span class="n">C_occ</span> <span class="o">=</span> <span class="n">C</span><span class="p">[:,</span> <span class="p">:</span><span class="n">nelec</span><span class="p">]</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">C_occ</span> <span class="o">@</span> <span class="n">C_occ</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">D_old</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Extract spin blocks</span>
+    <span class="n">Da</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:</span><span class="n">nbf</span><span class="p">,</span> <span class="p">:</span><span class="n">nbf</span><span class="p">]</span>
+    <span class="n">Db</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">nbf</span><span class="p">:,</span> <span class="n">nbf</span><span class="p">:]</span>
+    <span class="n">Dab</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:</span><span class="n">nbf</span><span class="p">,</span> <span class="n">nbf</span><span class="p">:]</span>
+    <span class="n">Dba</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">nbf</span><span class="p">:,</span> <span class="p">:</span><span class="n">nbf</span><span class="p">]</span>
+
+    <span class="c1"># Initial Fock matrices</span>
+    <span class="n">D_total</span> <span class="o">=</span> <span class="n">Da</span> <span class="o">+</span> <span class="n">Db</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pqrs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">D_total</span><span class="p">)</span>
+    <span class="n">Kaa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Da</span><span class="p">)</span>
+    <span class="n">Kbb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Db</span><span class="p">)</span>
+    <span class="n">Kab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Dab</span><span class="p">)</span>
+    <span class="n">Kba</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Dba</span><span class="p">)</span>
+
+    <span class="n">Fa</span> <span class="o">=</span> <span class="n">Hcore</span> <span class="o">+</span> <span class="n">J</span> <span class="o">-</span> <span class="n">Kaa</span>
+    <span class="n">Fb</span> <span class="o">=</span> <span class="n">Hcore</span> <span class="o">+</span> <span class="n">J</span> <span class="o">-</span> <span class="n">Kbb</span>
+    <span class="n">Fab</span> <span class="o">=</span> <span class="o">-</span><span class="n">Kab</span>
+    <span class="n">Fba</span> <span class="o">=</span> <span class="o">-</span><span class="n">Kba</span>
+
+    <span class="c1"># Initial energy</span>
+    <span class="n">E_elec</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Da</span> <span class="o">+</span> <span class="n">Db</span><span class="p">,</span> <span class="n">Hcore</span><span class="p">)</span> <span class="o">+</span> \
+             <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Fa</span><span class="p">,</span> <span class="n">Da</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Fb</span><span class="p">,</span> <span class="n">Db</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Fab</span><span class="p">,</span> <span class="n">Dab</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Fba</span><span class="p">,</span> <span class="n">Dba</span><span class="p">))</span>
+    <span class="n">E_old</span> <span class="o">=</span> <span class="n">E_elec</span> <span class="o">+</span> <span class="n">energy_nuc</span>
+
+    <span class="c1"># SCF Iterations</span>
+    <span class="k">for</span> <span class="n">Iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">I_thld</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># Recompute Fock matrices</span>
+        <span class="n">D_total</span> <span class="o">=</span> <span class="n">Da</span> <span class="o">+</span> <span class="n">Db</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pqrs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">D_total</span><span class="p">)</span>
+        <span class="n">Kaa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Da</span><span class="p">)</span>
+        <span class="n">Kbb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Db</span><span class="p">)</span>
+        <span class="n">Kab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Dab</span><span class="p">)</span>
+        <span class="n">Kba</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Dba</span><span class="p">)</span>
+
+        <span class="n">Fa</span> <span class="o">=</span> <span class="n">Hcore</span> <span class="o">+</span> <span class="n">J</span> <span class="o">-</span> <span class="n">Kaa</span>
+        <span class="n">Fb</span> <span class="o">=</span> <span class="n">Hcore</span> <span class="o">+</span> <span class="n">J</span> <span class="o">-</span> <span class="n">Kbb</span>
+        <span class="n">Fab</span> <span class="o">=</span> <span class="o">-</span><span class="n">Kab</span>
+        <span class="n">Fba</span> <span class="o">=</span> <span class="o">-</span><span class="n">Kba</span>
+
+        <span class="c1"># Build GHF Fock matrix (2nbf x 2nbf)</span>
+        <span class="n">F_ghf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n2</span><span class="p">,</span> <span class="n">n2</span><span class="p">))</span>
+        <span class="n">F_ghf</span><span class="p">[:</span><span class="n">nbf</span><span class="p">,</span> <span class="p">:</span><span class="n">nbf</span><span class="p">]</span> <span class="o">=</span> <span class="n">Fa</span>
+        <span class="n">F_ghf</span><span class="p">[</span><span class="n">nbf</span><span class="p">:,</span> <span class="n">nbf</span><span class="p">:]</span> <span class="o">=</span> <span class="n">Fb</span>
+        <span class="n">F_ghf</span><span class="p">[:</span><span class="n">nbf</span><span class="p">,</span> <span class="n">nbf</span><span class="p">:]</span> <span class="o">=</span> <span class="n">Fab</span>
+        <span class="n">F_ghf</span><span class="p">[</span><span class="n">nbf</span><span class="p">:,</span> <span class="p">:</span><span class="n">nbf</span><span class="p">]</span> <span class="o">=</span> <span class="n">Fba</span>
+
+        <span class="c1"># Diagonalize in orthogonal basis</span>
+        <span class="n">F_ortho</span> <span class="o">=</span> <span class="n">X_ghf</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">F_ghf</span> <span class="o">@</span> <span class="n">X_ghf</span>
+        <span class="n">eps</span><span class="p">,</span> <span class="n">C_ortho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">F_ortho</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">X_ghf</span> <span class="o">@</span> <span class="n">C_ortho</span>
+
+        <span class="c1"># New density matrix (occupy lowest nelec orbitals)</span>
+        <span class="n">C_occ</span> <span class="o">=</span> <span class="n">C</span><span class="p">[:,</span> <span class="p">:</span><span class="n">nelec</span><span class="p">]</span>
+        <span class="n">D_new</span> <span class="o">=</span> <span class="n">C_occ</span> <span class="o">@</span> <span class="n">C_occ</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">D_old</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">D_new</span>
+
+        <span class="c1"># Extract new spin blocks</span>
+        <span class="n">Da_new</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:</span><span class="n">nbf</span><span class="p">,</span> <span class="p">:</span><span class="n">nbf</span><span class="p">]</span>
+        <span class="n">Db_new</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">nbf</span><span class="p">:,</span> <span class="n">nbf</span><span class="p">:]</span>
+        <span class="n">Dab_new</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:</span><span class="n">nbf</span><span class="p">,</span> <span class="n">nbf</span><span class="p">:]</span>
+        <span class="n">Dba_new</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">nbf</span><span class="p">:,</span> <span class="p">:</span><span class="n">nbf</span><span class="p">]</span>
+
+        <span class="c1"># Recompute Fock with new density for energy</span>
+        <span class="n">D_total_new</span> <span class="o">=</span> <span class="n">Da_new</span> <span class="o">+</span> <span class="n">Db_new</span>
+        <span class="n">J_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pqrs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">D_total_new</span><span class="p">)</span>
+        <span class="n">Kaa_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Da_new</span><span class="p">)</span>
+        <span class="n">Kbb_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Db_new</span><span class="p">)</span>
+        <span class="n">Kab_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Dab_new</span><span class="p">)</span>
+        <span class="n">Kba_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">Dba_new</span><span class="p">)</span>
+
+        <span class="n">Fa_new</span> <span class="o">=</span> <span class="n">Hcore</span> <span class="o">+</span> <span class="n">J_new</span> <span class="o">-</span> <span class="n">Kaa_new</span>
+        <span class="n">Fb_new</span> <span class="o">=</span> <span class="n">Hcore</span> <span class="o">+</span> <span class="n">J_new</span> <span class="o">-</span> <span class="n">Kbb_new</span>
+        <span class="n">Fab_new</span> <span class="o">=</span> <span class="o">-</span><span class="n">Kab_new</span>
+        <span class="n">Fba_new</span> <span class="o">=</span> <span class="o">-</span><span class="n">Kba_new</span>
+
+        <span class="c1"># Electronic energy (GHF expression)</span>
+        <span class="n">E_elec</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Da_new</span> <span class="o">+</span> <span class="n">Db_new</span><span class="p">,</span> <span class="n">Hcore</span><span class="p">)</span> <span class="o">+</span> \
+                 <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Fa_new</span><span class="p">,</span> <span class="n">Da_new</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Fb_new</span><span class="p">,</span> <span class="n">Db_new</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Fab_new</span><span class="p">,</span> <span class="n">Dab_new</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Fba_new</span><span class="p">,</span> <span class="n">Dba_new</span><span class="p">))</span>
+        <span class="n">E_total</span> <span class="o">=</span> <span class="n">E_elec</span> <span class="o">+</span> <span class="n">energy_nuc</span>
+
+        <span class="c1"># Convergence criteria</span>
+        <span class="n">dE</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">E_total</span> <span class="o">-</span> <span class="n">E_old</span><span class="p">)</span>
+        <span class="n">dRMS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">D</span> <span class="o">-</span> <span class="n">D_old</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+        <span class="c1"># Update</span>
+        <span class="n">Da</span><span class="p">,</span> <span class="n">Db</span><span class="p">,</span> <span class="n">Dab</span><span class="p">,</span> <span class="n">Dba</span> <span class="o">=</span> <span class="n">Da_new</span><span class="p">,</span> <span class="n">Db_new</span><span class="p">,</span> <span class="n">Dab_new</span><span class="p">,</span> <span class="n">Dba_new</span>
+        <span class="n">E_old</span> <span class="o">=</span> <span class="n">E_total</span>
+
+        <span class="c1"># Check convergence</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">dE</span> <span class="o">&lt;</span> <span class="n">E_thld</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dRMS</span> <span class="o">&lt;</span> <span class="n">D_thld</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">Iter</span> <span class="o">==</span> <span class="n">I_thld</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Maximum number of SCF cycles (</span><span class="si">{</span><span class="n">I_thld</span><span class="si">}</span><span class="s2">) exceeded.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Prepare results</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;energy_elec&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">E_elec</span><span class="p">),</span>
+        <span class="s2">&quot;energy_nuc&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">energy_nuc</span><span class="p">),</span>
+        <span class="s2">&quot;energy_total&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">E_total</span><span class="p">),</span>
+        <span class="s2">&quot;mo_energy&quot;</span><span class="p">:</span> <span class="n">eps</span><span class="p">,</span>
+        <span class="s2">&quot;mo_coeff&quot;</span><span class="p">:</span> <span class="n">C</span><span class="p">,</span>
+        <span class="s2">&quot;rdm1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Da</span><span class="p">,</span> <span class="n">Db</span><span class="p">,</span> <span class="n">Dab</span><span class="p">,</span> <span class="n">Dba</span><span class="p">],</span>  <span class="c1"># Full GHF density matrix blocks</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

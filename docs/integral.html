@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Molecular Integrals in MiniHF &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+
+  
+    <link rel="shortcut icon" href="_static/logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Hartree-Fock Method" href="hf.html" />
+    <link rel="prev" title="Quick Start with MiniHF" href="quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start with MiniHF</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Molecular Integrals in MiniHF</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gaussian-type-orbitals-gtos">1. Gaussian Type Orbitals (GTOs)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-properties-of-gtos">Key Properties of GTOs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#basis-sets">2. Basis Sets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basis-set-example-sto-3g">Basis Set Example: STO-3G</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contracted-gaussian-type-orbitals-cgtos">Contracted Gaussian Type Orbitals (CGTOs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#available-basis-sets">Available Basis Sets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-obara-saika-recurrence-scheme">3. The Obara-Saika Recurrence Scheme</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overlap-integrals">3.1 Overlap Integrals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kinetic-energy-integrals">3.2 Kinetic Energy Integrals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nuclear-attraction-integrals">3.3 Nuclear Attraction Integrals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#electron-repulsion-integrals-eris">3.4 Electron Repulsion Integrals (ERIs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#practical-examples-with-minihf">4. Practical Examples with MiniHF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">5. Summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-takeaways">Key Takeaways</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hf.html">Hartree-Fock Method</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">minihf</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Molecular Integrals in MiniHF</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/integral.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="molecular-integrals-in-minihf">
+<h1>Molecular Integrals in MiniHF<a class="headerlink" href="#molecular-integrals-in-minihf" title="Link to this heading"></a></h1>
+<p>This notebook provides a comprehensive introduction to molecular integrals in MiniHF. We’ll cover:</p>
+<ol class="arabic simple">
+<li><p><strong>Gaussian Type Orbitals (GTOs)</strong> - The mathematical basis for quantum chemistry calculations</p></li>
+<li><p><strong>Basis Sets</strong> - How GTOs are combined to form atomic basis functions</p></li>
+<li><p><strong>Obara-Saika Scheme</strong> - The algorithm for computing molecular integrals efficiently</p></li>
+<li><p><strong>Practical Examples</strong> - Hands-on demonstration of integral calculations in MiniHF</p></li>
+</ol>
+<p>Let’s start by exploring the fundamental concepts.</p>
+<section id="gaussian-type-orbitals-gtos">
+<h2>1. Gaussian Type Orbitals (GTOs)<a class="headerlink" href="#gaussian-type-orbitals-gtos" title="Link to this heading"></a></h2>
+<p>MiniHF uses <strong>Cartesian Gaussian Type Orbitals (GTOs)</strong> as the basis functions for molecular calculations. A Cartesian GTO is defined mathematically as:</p>
+<div class="math notranslate nohighlight">
+\[
+G_{ijk}(\mathbf{r}_A, \alpha) = x_A^i y_A^j z_A^k e^{-\alpha r_A^2}
+\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbf{r}_A = \mathbf{r} - \mathbf{A}\)</span> is the position vector relative to atom center <span class="math notranslate nohighlight">\(\mathbf{A}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span> is the orbital exponent (controls the spatial extent)</p></li>
+<li><p><span class="math notranslate nohighlight">\(i, j, k \geq 0\)</span> are non-negative integers representing the angular momentum components</p></li>
+<li><p><span class="math notranslate nohighlight">\(l = i + j + k\)</span> is the total angular momentum quantum number (0 = s, 1 = p, 2 = d, etc.)</p></li>
+</ul>
+<section id="key-properties-of-gtos">
+<h3>Key Properties of GTOs<a class="headerlink" href="#key-properties-of-gtos" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Factorization</strong>: Cartesian GTOs factorize into three one-dimensional Gaussians:
+$<span class="math notranslate nohighlight">\(
+G_{ijk}(\mathbf{r}_A, \alpha) = G_i(x_A, \alpha) G_j(y_A, \alpha) G_k(z_A, \alpha)
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>G_i(x_A, \alpha) = x_A^i e^{-\alpha x_A^2}$</p></li>
+<li><p><strong>Gaussian Product Rule</strong>: The product of two Gaussians is another Gaussian:
+$<span class="math notranslate nohighlight">\(
+e^{-\alpha x_A^2} e^{-\beta x_B^2} = e^{-\mu X_{AB}^2} e^{-p x_P^2}
+\)</span>$
+where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p = \alpha + \beta\)</span> (sum of exponents)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu = \frac{\alpha\beta}{\alpha+\beta}\)</span> (reduced exponent)</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_x = \frac{\alpha A_x + \beta B_x}{\alpha+\beta}\)</span> (center-of-charge)</p></li>
+<li><p><span class="math notranslate nohighlight">\(X_{AB} = A_x - B_x\)</span> (separation)</p></li>
+</ul>
+</li>
+<li><p><strong>Differentiation</strong>: The derivative of a Gaussian yields a linear combination of two Gaussians:
+$<span class="math notranslate nohighlight">\(
+\frac{\partial G_i(\alpha, x_A)}{\partial x} = 2\alpha G_{i+1}(\alpha, x_A) - i G_{i-1}(\alpha, x_A)
+\)</span>$</p></li>
+</ol>
+</section>
+</section>
+<section id="basis-sets">
+<h2>2. Basis Sets<a class="headerlink" href="#basis-sets" title="Link to this heading"></a></h2>
+<p>Basis sets are collections of GTOs used to approximate atomic orbitals. Most quantum chemistry packages, including MiniHF, use the NWChem basis set format.</p>
+<section id="basis-set-example-sto-3g">
+<h3>Basis Set Example: STO-3G<a class="headerlink" href="#basis-set-example-sto-3g" title="Link to this heading"></a></h3>
+<p>The STO-3G basis set approximates Slater-type orbitals (STOs) with 3 primitive Gaussians (PGTOs) contracted together. Here’s the definition for hydrogen and oxygen:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">BASIS</span> <span class="s2">&quot;ao basis&quot;</span> <span class="n">PRINT</span>
+<span class="c1"># Hydrogen: (3s) -&gt; [1s]</span>
+<span class="n">H</span>    <span class="n">S</span>
+    <span class="mf">3.42525091</span>             <span class="mf">0.15432897</span>       
+    <span class="mf">0.62391373</span>             <span class="mf">0.53532814</span>       
+    <span class="mf">0.16885540</span>             <span class="mf">0.44463454</span>       
+<span class="c1"># Oxygen: (6s,3p) -&gt; [2s,1p]</span>
+<span class="n">O</span>    <span class="n">S</span>
+    <span class="mf">130.7093200</span>              <span class="mf">0.15432897</span>       
+    <span class="mf">23.8088610</span>              <span class="mf">0.53532814</span>       
+    <span class="mf">6.4436083</span>              <span class="mf">0.44463454</span>       
+<span class="n">O</span>    <span class="n">SP</span>
+    <span class="mf">5.0331513</span>             <span class="o">-</span><span class="mf">0.09996723</span>             <span class="mf">0.15591627</span>       
+    <span class="mf">1.1695961</span>              <span class="mf">0.39951283</span>             <span class="mf">0.60768372</span>       
+    <span class="mf">0.3803890</span>              <span class="mf">0.70011547</span>             <span class="mf">0.39195739</span>       
+<span class="n">END</span>
+</pre></div>
+</div>
+</section>
+<section id="contracted-gaussian-type-orbitals-cgtos">
+<h3>Contracted Gaussian Type Orbitals (CGTOs)<a class="headerlink" href="#contracted-gaussian-type-orbitals-cgtos" title="Link to this heading"></a></h3>
+<p>Contracted Gaussians are linear combinations of primitive Gaussians:
+$<span class="math notranslate nohighlight">\(
+\chi_{\mu}(\mathbf{r}) = \sum_{p=1}^P d_{\mu p} G_{i,j,k}(\mathbf{r}, \alpha_p)
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>d_{\mu p}<span class="math notranslate nohighlight">\( are contraction coefficients and \)</span>P$ is the number of primitives.</p>
+</section>
+<section id="available-basis-sets">
+<h3>Available Basis Sets<a class="headerlink" href="#available-basis-sets" title="Link to this heading"></a></h3>
+<p>MiniHF supports basis sets from the EMSL Basis Set Exchange (https://bse.pnl.gov). Common basis sets include:</p>
+<ul class="simple">
+<li><p><strong>STO-3G</strong>: Minimal basis set</p></li>
+<li><p><strong>6-31G</strong>: Split-valence basis set</p></li>
+<li><p><strong>6-311G</strong>: Larger split-valence basis set</p></li>
+<li><p><strong>cc-pVDZ/cc-pVTZ</strong>: Correlation-consistent basis sets</p></li>
+</ul>
+</section>
+</section>
+<section id="the-obara-saika-recurrence-scheme">
+<h2>3. The Obara-Saika Recurrence Scheme<a class="headerlink" href="#the-obara-saika-recurrence-scheme" title="Link to this heading"></a></h2>
+<p>The Obara-Saika algorithm is a recursive method for efficiently computing molecular integrals over Gaussian basis functions. It avoids direct evaluation of complicated integrals by using recurrence relations.</p>
+<section id="overlap-integrals">
+<h3>3.1 Overlap Integrals<a class="headerlink" href="#overlap-integrals" title="Link to this heading"></a></h3>
+<p>The overlap integral measures the overlap between two basis functions:
+$<span class="math notranslate nohighlight">\(
+S_{ab} = \langle G_a | G_b \rangle
+\)</span>$</p>
+<p>It factorizes into three Cartesian components:
+$<span class="math notranslate nohighlight">\(
+S_{ab} = S_{ij}(x) S_{kl}(y) S_{mn}(z)
+\)</span>$</p>
+<p><strong>Recurrence Relation</strong>:
+$<span class="math notranslate nohighlight">\(
+\begin{aligned}
+S_{i+1,j} &amp;= X_{PA} S_{ij} + \frac{1}{2p}(i S_{i-1,j} + j S_{i,j-1}) \\
+S_{i,j+1} &amp;= X_{PB} S_{ij} + \frac{1}{2p}(i S_{i-1,j} + j S_{i,j-1})
+\end{aligned}
+\)</span>$</p>
+<p><strong>Boundary Condition</strong>:
+$<span class="math notranslate nohighlight">\(
+S_{0,0} = \sqrt{\frac{\pi}{p}} e^{-\mu X_{AB}^2}
+\)</span>$</p>
+</section>
+<section id="kinetic-energy-integrals">
+<h3>3.2 Kinetic Energy Integrals<a class="headerlink" href="#kinetic-energy-integrals" title="Link to this heading"></a></h3>
+<p>The kinetic energy integral describes the electron’s kinetic energy:
+$<span class="math notranslate nohighlight">\(
+T_{ab} = \langle G_a | -\frac{1}{2} \nabla^2 | G_b \rangle
+\)</span>$</p>
+<p>It also factorizes into Cartesian components:
+$<span class="math notranslate nohighlight">\(
+T_{ab} = T_{ij}(x) S_{kl}(y) S_{mn}(z) + S_{ij}(x) T_{kl}(y) S_{mn}(z) + S_{ij}(x) S_{kl}(y) T_{mn}(z)
+\)</span>$</p>
+<p><strong>Recurrence Relation</strong>:
+$<span class="math notranslate nohighlight">\(
+\begin{aligned}
+T_{i+1,j} &amp;= X_{PA} T_{ij} + \frac{1}{2p}(i T_{i-1,j} + j T_{i,j-1}) + \frac{b}{p}(2a S_{i+1,j} - i S_{i-1,j}) \\
+T_{i,j+1} &amp;= X_{PB} T_{ij} + \frac{1}{2p}(i T_{i-1,j} + j T_{i,j-1}) + \frac{a}{p}(2b S_{i,j+1} - j S_{i,j-1})
+\end{aligned}
+\)</span>$</p>
+<p><strong>Boundary Condition</strong>:
+$<span class="math notranslate nohighlight">\(
+T_{0,0} = \left(a - 2a^2 \left(X_{PA}^2 + \frac{1}{2p}\right)\right) S_{0,0}
+\)</span>$</p>
+</section>
+<section id="nuclear-attraction-integrals">
+<h3>3.3 Nuclear Attraction Integrals<a class="headerlink" href="#nuclear-attraction-integrals" title="Link to this heading"></a></h3>
+<p>The nuclear attraction integral describes the electrostatic attraction between electrons and nuclei:
+$<span class="math notranslate nohighlight">\(
+V_{ab} = \langle G_a | -\sum_{\alpha} \frac{Z_{\alpha}}{|\mathbf{r} - \mathbf{R}_{\alpha}|} | G_b \rangle
+\)</span>$</p>
+<p><strong>Recurrence Relation</strong> (Obara-Saika):
+$<span class="math notranslate nohighlight">\(
+\begin{aligned}
+\Theta_{i+1,j,k,l,m,n}^{N} &amp;= X_{PA} \Theta_{i,j,k,l,m,n}^{N} \\
+&amp;+ \frac{1}{2p}(i \Theta_{i-1,j,k,l,m,n}^{N} + j \Theta_{i,j-1,k,l,m,n}^{N}) \\
+&amp;- X_{PC} \Theta_{i,j,k,l,m,n}^{N+1} \\
+&amp;- \frac{1}{2p}(i \Theta_{i-1,j,k,l,m,n}^{N+1} + j \Theta_{i,j-1,k,l,m,n}^{N+1})
+\end{aligned}
+\)</span>$</p>
+<p><strong>Boundary Condition</strong>:
+$<span class="math notranslate nohighlight">\(
+\Theta_{000000}^{N} = \frac{2\pi}{p} K_{ab}^{xyz} F_N(p R_{PC}^2)
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>F_N(x)<span class="math notranslate nohighlight">\( is the Boys function and \)</span>K_{ab}^{xyz} = e^{-\mu R_{AB}^2}$.</p>
+</section>
+<section id="electron-repulsion-integrals-eris">
+<h3>3.4 Electron Repulsion Integrals (ERIs)<a class="headerlink" href="#electron-repulsion-integrals-eris" title="Link to this heading"></a></h3>
+<p>The electron repulsion integral describes the Coulomb repulsion between pairs of electrons:
+$<span class="math notranslate nohighlight">\(
+(ab|cd) = \langle G_a G_b | \frac{1}{|\mathbf{r}_1 - \mathbf{r}_2|} | G_c G_d \rangle
+\)</span>$</p>
+<p>This is the most computationally expensive integral in Hartree-Fock theory, scaling as <span class="math notranslate nohighlight">\(O(N^4)\)</span> with the number of basis functions.</p>
+<p><strong>Boundary Condition</strong>:
+$<span class="math notranslate nohighlight">\(
+\Theta_{0000;0000;0000}^{N} = \frac{2\pi^{2.5}}{pq\sqrt{p+q}} K_{ab}^{xyz} K_{cd}^{xyz} F_N(\alpha R_{PQ}^2)
+\)</span>$</p>
+<p><strong>Two-Electron Recurrence Relation</strong>:
+$<span class="math notranslate nohighlight">\(
+\begin{aligned}
+\Theta_{i+1,j,k,l}^{N} &amp;= X_{PA} \Theta_{i,j,k,l}^{N} \\
+&amp;- \frac{\alpha}{p} X_{PQ} \Theta_{i,j,k,l}^{N+1} \\
+&amp;+ \frac{i}{2p} \left(\Theta_{i-1,j,k,l}^{N} - \frac{\alpha}{p} \Theta_{i-1,j,k,l}^{N+1}\right) \\
+&amp;+ \frac{j}{2p} \left(\Theta_{i,j-1,k,l}^{N} - \frac{\alpha}{p} \Theta_{i,j-1,k,l}^{N+1}\right) \\
+&amp;- \frac{k}{2(p+q)} \Theta_{i,j,k-1,l}^{N+1} \\
+&amp;- \frac{l}{2(p+q)} \Theta_{i,j,k,l-1}^{N+1}
+\end{aligned}
+\)</span>$</p>
+</section>
+</section>
+<section id="practical-examples-with-minihf">
+<h2>4. Practical Examples with MiniHF<a class="headerlink" href="#practical-examples-with-minihf" title="Link to this heading"></a></h2>
+<p>Let’s see how to compute molecular integrals using MiniHF. We’ll create a simple molecule and calculate the Hamiltonian matrix.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import required modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.basis</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasisSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hamiltonian</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Create a simple hydrogen molecule</span>
+<span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H 0.0, 0.0, -0.37&#39;</span><span class="p">,</span> <span class="s1">&#39;H 0.0, 0.0, 0.37&#39;</span><span class="p">]</span>
+<span class="n">mol</span> <span class="o">=</span> <span class="n">Molecule</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Build basis set (STO-3G for minimal example)</span>
+<span class="n">basis</span> <span class="o">=</span> <span class="n">BasisSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="s1">&#39;sto-3g.nwchem&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Molecule: </span><span class="si">{</span><span class="n">mol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of atoms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of basis functions: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Basis function types:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">orb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">basis</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">orb</span><span class="o">.</span><span class="n">shell</span><span class="si">}</span><span class="s2"> (l=</span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">orb</span><span class="o">.</span><span class="n">shell</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Molecule: Molecule(atoms=2, charge=0, multiplicity=1)
+Number of atoms: 2
+Number of basis functions: 2
+Basis function types:
+  0: (0, 0, 0) (l=0)
+  1: (0, 0, 0) (l=0)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute the Hamiltonian</span>
+<span class="n">ham</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">basis</span><span class="p">)</span>
+
+<span class="c1"># Extract integral matrices</span>
+<span class="n">S</span> <span class="o">=</span> <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span>  <span class="c1"># Overlap matrix</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span>  <span class="c1"># Kinetic energy matrix</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span>  <span class="c1"># Potential energy matrix</span>
+<span class="n">Hcore</span> <span class="o">=</span> <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;Hcore&#39;</span><span class="p">]</span>  <span class="c1"># Core Hamiltonian (T + V)</span>
+<span class="n">Eri</span> <span class="o">=</span> <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;Eri&#39;</span><span class="p">]</span>  <span class="c1"># Electron repulsion integrals</span>
+
+<span class="c1"># Print matrix dimensions</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Integral Matrix Dimensions ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Overlap matrix (S): </span><span class="si">{</span><span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Kinetic matrix (T): </span><span class="si">{</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Potential matrix (V): </span><span class="si">{</span><span class="n">V</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Core Hamiltonian (Hcore): </span><span class="si">{</span><span class="n">Hcore</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Electron repulsion integrals (Eri): </span><span class="si">{</span><span class="n">Eri</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Integral Matrix Dimensions ===
+Overlap matrix (S): (2, 2)
+Kinetic matrix (T): (2, 2)
+Potential matrix (V): (2, 2)
+Core Hamiltonian (Hcore): (2, 2)
+Electron repulsion integrals (Eri): (2, 2, 2, 2)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Analyze the overlap matrix</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Overlap Matrix Analysis ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Overlap matrix S:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="c1"># Check key properties</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Trace of S: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Determinant of S: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S is symmetric: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Diagonalize S to check eigenvalues</span>
+<span class="n">eigvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Eigenvalues of S: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">eigvals</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Overlap Matrix Analysis ===
+
+Overlap matrix S:
+[[1.       0.878182]
+ [0.878182 1.      ]]
+
+Trace of S: 2.000000
+Determinant of S: 0.228797
+S is symmetric: True
+
+Eigenvalues of S: [0.121818 1.878182]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Analyze the core Hamiltonian</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Core Hamiltonian Analysis ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Core Hamiltonian Hcore = T + V:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">Hcore</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="c1"># Verify that Hcore = T + V</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Verification: |Hcore - (T + V)|_max = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Hcore</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">V</span><span class="p">)))</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check symmetry</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hcore is symmetric: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">Hcore</span><span class="p">,</span><span class="w"> </span><span class="n">Hcore</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get diagonal elements (approximate orbital energies)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Diagonal elements of Hcore:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Hcore[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">Hcore</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Core Hamiltonian Analysis ===
+
+Core Hamiltonian Hcore = T + V:
+[[-1.404011 -1.391124]
+ [-1.391124 -1.404011]]
+
+Verification: |Hcore - (T + V)|_max = 0.000000e+00
+Hcore is symmetric: True
+
+Diagonal elements of Hcore:
+  Hcore[0,0] = -1.404011
+  Hcore[1,1] = -1.404011
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Analyze electron repulsion integrals</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Electron Repulsion Integrals Analysis ===&quot;</span><span class="p">)</span>
+
+<span class="c1"># Number of unique ERIs (8-fold symmetry)</span>
+<span class="n">n_bf</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+<span class="n">total_eris</span> <span class="o">=</span> <span class="n">n_bf</span> <span class="o">**</span> <span class="mi">4</span>
+<span class="n">unique_eris</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_bf</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_bf</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total ERIs: </span><span class="si">{</span><span class="n">total_eris</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unique ERIs (with symmetry): </span><span class="si">{</span><span class="n">unique_eris</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check some specific ERIs</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Selected ERI values:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (0,0|0,0) = </span><span class="si">{</span><span class="n">Eri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (0,0|1,1) = </span><span class="si">{</span><span class="n">Eri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (0,1|0,1) = </span><span class="si">{</span><span class="n">Eri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (0,1|1,0) = </span><span class="si">{</span><span class="n">Eri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Verify symmetry relations</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ERI Symmetry Checks:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (0,0|1,1) == (1,1|0,0): </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">Eri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">Eri</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (0,1|0,1) == (1,0|1,0): </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">Eri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">Eri</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (0,1|0,1) == (0,1|1,0): </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">Eri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">Eri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Electron Repulsion Integrals Analysis ===
+Total ERIs: 16
+Unique ERIs (with symmetry): 9
+
+Selected ERI values:
+  (0,0|0,0) = 0.774606
+  (0,0|1,1) = 0.699480
+  (0,1|0,1) = 0.570752
+  (0,1|1,0) = 0.570752
+
+ERI Symmetry Checks:
+  (0,0|1,1) == (1,1|0,0): True
+  (0,1|0,1) == (1,0|1,0): True
+  (0,1|0,1) == (0,1|1,0): True
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="summary">
+<h2>5. Summary<a class="headerlink" href="#summary" title="Link to this heading"></a></h2>
+<p>In this notebook, we’ve covered:</p>
+<ol class="arabic simple">
+<li><p><strong>Gaussian Type Orbitals</strong>: The mathematical foundation of modern quantum chemistry</p></li>
+<li><p><strong>Basis Sets</strong>: Collections of GTOs used to approximate atomic orbitals</p></li>
+<li><p><strong>Obara-Saika Algorithm</strong>: Efficient recursive computation of molecular integrals</p></li>
+<li><p><strong>Practical Usage</strong>: How to compute integrals in MiniHF</p></li>
+</ol>
+<section id="key-takeaways">
+<h3>Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Overlap integrals</strong> measure how much two basis functions overlap</p></li>
+<li><p><strong>Kinetic energy integrals</strong> describe electron motion</p></li>
+<li><p><strong>Nuclear attraction integrals</strong> describe electron-nucleus interactions</p></li>
+<li><p><strong>Electron repulsion integrals</strong> describe electron-electron interactions (most expensive!)</p></li>
+</ul>
+<p>These integrals form the building blocks for Hartree-Fock and post-Hartree-Fock methods. The Obara-Saika recurrence scheme makes it feasible to compute these integrals efficiently for large basis sets.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bonus: Compute integrals for water molecule</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Water Molecule Integrals ===&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create water molecule</span>
+<span class="n">h2o_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;O 0.0, 0.0, 0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;H 0.0, -0.757, 0.587&#39;</span><span class="p">,</span> <span class="s1">&#39;H 0.0, 0.757, 0.587&#39;</span><span class="p">]</span>
+<span class="n">h2o</span> <span class="o">=</span> <span class="n">Molecule</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">h2o_atoms</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Build 6-31G basis set</span>
+<span class="n">h2o_basis</span> <span class="o">=</span> <span class="n">BasisSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">h2o</span><span class="p">,</span> <span class="s1">&#39;6-31g.nwchem&#39;</span><span class="p">)</span>
+
+<span class="c1"># Compute Hamiltonian</span>
+<span class="n">h2o_ham</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">h2o</span><span class="p">,</span> <span class="n">h2o_basis</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Water molecule with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">h2o</span><span class="p">)</span><span class="si">}</span><span class="s2"> atoms&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Basis functions: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">h2o_basis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERI tensor size: </span><span class="si">{</span><span class="n">h2o_ham</span><span class="p">[</span><span class="s1">&#39;Eri&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total ERIs: </span><span class="si">{</span><span class="n">h2o_ham</span><span class="p">[</span><span class="s1">&#39;Eri&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Compute some properties</span>
+<span class="n">h2o_S</span> <span class="o">=</span> <span class="n">h2o_ham</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span>
+<span class="n">h2o_Hcore</span> <span class="o">=</span> <span class="n">h2o_ham</span><span class="p">[</span><span class="s1">&#39;Hcore&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Overlap matrix trace: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">h2o_S</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Core Hamiltonian trace: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">h2o_Hcore</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Smallest Hcore eigenvalue: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">h2o_Hcore</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Largest Hcore eigenvalue: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">h2o_Hcore</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Water Molecule Integrals ===
+Water molecule with 3 atoms
+Basis functions: 13
+ERI tensor size: (13, 13, 13, 13)
+Total ERIs: 28,561
+
+Overlap matrix trace: 13.000000
+Core Hamiltonian trace: -123.119025
+Smallest Hcore eigenvalue: -48.772084
+Largest Hcore eigenvalue: -0.075431
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="Quick Start with MiniHF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hf.html" class="btn btn-neutral float-right" title="Hartree-Fock Method" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

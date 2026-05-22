@@ -1,0 +1,93 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "847e4a0e",
+   "metadata": {},
+   "source": [
+    "# Installation\n",
+    "\n",
+    "This page provides instructions for installing MiniHF and its dependencies."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "17ad0fa8",
+   "metadata": {},
+   "source": [
+    "## Prerequisites\n",
+    "\n",
+    "Before installing MiniHF, you should have the following software installed:\n",
+    "\n",
+    "- Python 3.7 or later\n",
+    "- NumPy"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b3b1410e",
+   "metadata": {},
+   "source": [
+    "## Compiling from source code\n",
+    "\n",
+    "The recommended way to install MiniHF is from source:\n",
+    "\n",
+    "* Clone the repository:\n",
+    "```bash\n",
+    "git clone https://github.com/ZhaoYilin/minihf.git\n",
+    "cd minihf\n",
+    "```\n",
+    "\n",
+    "* Install MiniHF:\n",
+    "```bash\n",
+    "python3 -m pip install -e .\n",
+    "```\n",
+    "\n",
+    "This will install MiniHF in development mode, which means changes to the source code will be immediately available without needing to reinstall.\n",
+    "\n",
+    "\n",
+    "* Using pip to install python package on GitHub\n",
+    "```bash\n",
+    "pip install git+https://github.com/ZhaoYilin/minihf\n",
+    "```\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4784fcfc",
+   "metadata": {},
+   "source": [
+    "## Verifying the Installation\n",
+    "\n",
+    "To verify that MiniHF is installed correctly, run the test suite:\n",
+    "\n",
+    "```bash\n",
+    "pytest test/ -v\n",
+    "```\n",
+    "\n",
+    "All tests should pass if the installation was successful."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

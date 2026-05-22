@@ -1,0 +1,300 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "ff3bc113",
+   "metadata": {},
+   "source": [
+    "# Quick Start with MiniHF\n",
+    "\n",
+    "Welcome to MiniHF, a lightweight Hartree-Fock quantum chemistry library. This notebook provides a comprehensive introduction to using MiniHF for molecular structure calculations. We'll walk through the complete workflow of:\n",
+    "\n",
+    "1. **Creating molecules** with the ``Molecule`` class\n",
+    "2. **Building basis sets** with the ``BasisSet`` class\n",
+    "3. **Constructing molecular Hamiltonians** with the ``Hamiltonian`` class\n",
+    "4. **Solving Hartree-Fock equations** with the ``HFSolver`` class\n",
+    "\n",
+    "Let's get started!"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "molecule-intro",
+   "metadata": {},
+   "source": [
+    "## 1. Creating a Molecule\n",
+    "\n",
+    "The first step in any quantum chemistry calculation is to define the molecular system. In MiniHF, we use the ``Molecule`` class to represent molecules. Atoms can be specified using element symbols or atomic numbers, followed by their Cartesian coordinates in angstroms.\n",
+    "\n",
+    "Let's create a water molecule (H₂O) as our example system."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "bc74e274",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Successfully created molecule: Molecule(atoms=3, charge=0, multiplicity=1)\n",
+      "Number of atoms: 3\n",
+      "Molecular charge: 0\n",
+      "Multiplicity: 1\n",
+      "\n",
+      "Atom details:\n",
+      "  Atom 0: O (Z=8) at [0. 0. 0.]\n",
+      "  Atom 1: H (Z=1) at [ 0.    -0.757  0.587]\n",
+      "  Atom 2: H (Z=1) at [0.    0.757 0.587]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from minihf.molecule import Molecule\n",
+    "\n",
+    "# Define atoms with coordinates (element symbol or atomic number + x, y, z in angstroms)\n",
+    "atoms = [\n",
+    "    'O 0.0, 0.0, 0.0',      # Oxygen at origin\n",
+    "    'H 0.0, -0.757, 0.587', # Hydrogen atom\n",
+    "    'H 0.0, 0.757, 0.587'   # Hydrogen atom\n",
+    "]\n",
+    "\n",
+    "# Build the molecule (charge=0 for neutral molecule, multiplicity=1 for singlet)\n",
+    "mol = Molecule.build(atoms=atoms, charge=0, multiplicity=1)\n",
+    "\n",
+    "print(f\"Successfully created molecule: {mol}\")\n",
+    "print(f\"Number of atoms: {len(mol)}\")\n",
+    "print(f\"Molecular charge: {mol.charge}\")\n",
+    "print(f\"Multiplicity: {mol.multiplicity}\")\n",
+    "\n",
+    "# Print detailed atom information\n",
+    "print(\"\\nAtom details:\")\n",
+    "for i, atom in enumerate(mol):\n",
+    "    print(f\"  Atom {i}: {atom.symbol} (Z={atom.number}) at {atom.coords}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4e92d6d5",
+   "metadata": {},
+   "source": [
+    "## 2. Creating a Basis Set\n",
+    "\n",
+    "A basis set is a set of mathematical functions (typically Gaussian-type orbitals) used to expand the molecular orbitals. MiniHF supports various standard basis sets through the ``BasisSet`` class.\n",
+    "\n",
+    "We'll use the **6-31G** basis set, which is a popular split-valence basis set that provides a good balance between computational cost and accuracy for small molecules."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "223b2f4b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Basis set created with 13 basis functions:\n",
+      "  Orbital 0: shell=(0, 0, 0), n_primitives=6\n",
+      "  Orbital 1: shell=(0, 0, 0), n_primitives=3\n",
+      "  Orbital 2: shell=(1, 0, 0), n_primitives=3\n",
+      "  Orbital 3: shell=(0, 1, 0), n_primitives=3\n",
+      "  Orbital 4: shell=(0, 0, 1), n_primitives=3\n",
+      "  Orbital 5: shell=(0, 0, 0), n_primitives=1\n",
+      "  Orbital 6: shell=(1, 0, 0), n_primitives=1\n",
+      "  Orbital 7: shell=(0, 1, 0), n_primitives=1\n",
+      "  Orbital 8: shell=(0, 0, 1), n_primitives=1\n",
+      "  Orbital 9: shell=(0, 0, 0), n_primitives=3\n",
+      "  Orbital 10: shell=(0, 0, 0), n_primitives=1\n",
+      "  Orbital 11: shell=(0, 0, 0), n_primitives=3\n",
+      "  Orbital 12: shell=(0, 0, 0), n_primitives=1\n"
+     ]
+    }
+   ],
+   "source": [
+    "from minihf.basis import BasisSet\n",
+    "\n",
+    "# Build basis set for the water molecule\n",
+    "basis = BasisSet.build(mol, '6-31g.nwchem')\n",
+    "\n",
+    "# Let's examine the basis functions for the oxygen atom\n",
+    "print(f\"Basis set created with {len(basis)} basis functions:\")\n",
+    "for i, orb in enumerate(basis):\n",
+    "    print(f\"  Orbital {i}: shell={orb.shell}, n_primitives={len(orb.exponents)}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "atomicgrid-intro",
+   "metadata": {},
+   "source": [
+    "## 3. Constructing the Molecular Hamiltonian\n",
+    "\n",
+    "The molecular Hamiltonian contains all the necessary information to describe the quantum mechanical system. It includes:\n",
+    "\n",
+    "- **Overlap matrix (S)**: Measures the overlap between basis functions\n",
+    "- **Kinetic energy matrix (T)**: Electron kinetic energy integrals\n",
+    "- **Potential energy matrix (V)**: Electron-nuclear attraction integrals\n",
+    "- **Core Hamiltonian (H_core)**: T + V, the one-electron Hamiltonian\n",
+    "- **Electron repulsion integrals (Eri)**: Two-electron Coulomb integrals\n",
+    "\n",
+    "The ``Hamiltonian`` class automates the calculation of all these integrals."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "6095d1c5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of basis functions: 13\n",
+      "\n",
+      "Matrix dimensions:\n",
+      "  Overlap matrix (S): (13, 13)\n",
+      "  Kinetic energy matrix (T): (13, 13)\n",
+      "  Potential energy matrix (V): (13, 13)\n",
+      "  Core Hamiltonian (H_core): (13, 13)\n",
+      "  Electron repulsion integrals (Eri): (13, 13, 13, 13)\n"
+     ]
+    }
+   ],
+   "source": [
+    "from minihf.hamiltonian import Hamiltonian\n",
+    "\n",
+    "# Build the Hamiltonian for our molecule\n",
+    "ham = Hamiltonian.build(mol, basis)\n",
+    "\n",
+    "# Check the shapes of the integral matrices\n",
+    "n_bf = len(basis)\n",
+    "print(f\"Number of basis functions: {n_bf}\")\n",
+    "print(f\"\\nMatrix dimensions:\")\n",
+    "print(f\"  Overlap matrix (S): {ham['S'].shape}\")\n",
+    "print(f\"  Kinetic energy matrix (T): {ham['T'].shape}\")\n",
+    "print(f\"  Potential energy matrix (V): {ham['V'].shape}\")\n",
+    "print(f\"  Core Hamiltonian (H_core): {ham['Hcore'].shape}\")\n",
+    "print(f\"  Electron repulsion integrals (Eri): {ham['Eri'].shape}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "324cec2e",
+   "metadata": {},
+   "source": [
+    "## 4. Solving the Hartree-Fock Equation\n",
+    "\n",
+    "The Hartree-Fock method is the simplest self-consistent field (SCF) approach for solving the electronic structure problem. It approximates the many-electron wavefunction as a product of single-electron orbitals.\n",
+    "\n",
+    "MiniHF's ``HFSolver`` class implements the restricted Hartree-Fock (RHF) method for closed-shell molecules like water."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "927c0915",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "=== Hartree-Fock Calculation Results ===\n",
+      "\n",
+      "Total energy: -74.498108 Hartree\n",
+      "Electronic energy: -91.861400 Hartree\n",
+      "Nuclear repulsion energy: 17.363292 Hartree\n",
+      "\n",
+      "Molecular orbital energies (eV):\n",
+      "  MO 1: -559.0048 eV\n",
+      "  MO 2: -47.4916 eV\n",
+      "  MO 3: -28.2713 eV\n",
+      "  MO 4: -17.2360 eV\n",
+      "  MO 5: -15.3793 eV\n",
+      "  MO 6:   7.0822 eV\n",
+      "  MO 7:   9.5516 eV\n",
+      "  MO 8:  28.3278 eV\n",
+      "  MO 9:  30.6858 eV\n",
+      "  MO 10:  31.8366 eV\n",
+      "  MO 11:  46.2353 eV\n",
+      "  MO 12:  62.6364 eV\n",
+      "  MO 13:  77.9588 eV\n",
+      "\n",
+      "Occupied orbitals: MO 1-5\n",
+      "Virtual orbitals: MO 6-13\n",
+      "\n",
+      "HOMO energy: -15.3793 eV\n",
+      "LUMO energy: 7.0822 eV\n",
+      "HOMO-LUMO gap: 22.4614 eV\n"
+     ]
+    }
+   ],
+   "source": [
+    "from minihf.scf.hf_solver import HFSolver\n",
+    "\n",
+    "# Initialize the HF solver\n",
+    "hf_solver = HFSolver(ham)\n",
+    "\n",
+    "# Solve the RHF equations\n",
+    "results = hf_solver.rhf()\n",
+    "\n",
+    "# Extract key results\n",
+    "energy_total = results['energy_total']\n",
+    "energy_elec = results['energy_elec']\n",
+    "energy_nuc = results['energy_nuc']\n",
+    "mo_energies = results['mo_energy']\n",
+    "\n",
+    "print(\"=== Hartree-Fock Calculation Results ===\")\n",
+    "print(f\"\\nTotal energy: {energy_total:.6f} Hartree\")\n",
+    "print(f\"Electronic energy: {energy_elec:.6f} Hartree\")\n",
+    "print(f\"Nuclear repulsion energy: {energy_nuc:.6f} Hartree\")\n",
+    "\n",
+    "# Print molecular orbital energies\n",
+    "print(\"\\nMolecular orbital energies (eV):\")\n",
+    "for i, energy in enumerate(mo_energies):\n",
+    "    # Convert Hartree to eV (1 Hartree = 27.2114 eV)\n",
+    "    energy_eV = energy * 27.2114\n",
+    "    print(f\"  MO {i+1}: {energy_eV:>8.4f} eV\")\n",
+    "\n",
+    "# Identify occupied and virtual orbitals (water has 10 electrons = 5 occupied MOs)\n",
+    "n_occupied = 5\n",
+    "print(f\"\\nOccupied orbitals: MO 1-{n_occupied}\")\n",
+    "print(f\"Virtual orbitals: MO {n_occupied+1}-{len(mo_energies)}\")\n",
+    "\n",
+    "# Calculate HOMO-LUMO gap\n",
+    "homo_energy = mo_energies[n_occupied - 1] * 27.2114\n",
+    "lumo_energy = mo_energies[n_occupied] * 27.2114\n",
+    "homo_lumo_gap = lumo_energy - homo_energy\n",
+    "print(f\"\\nHOMO energy: {homo_energy:.4f} eV\")\n",
+    "print(f\"LUMO energy: {lumo_energy:.4f} eV\")\n",
+    "print(f\"HOMO-LUMO gap: {homo_lumo_gap:.4f} eV\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "base",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

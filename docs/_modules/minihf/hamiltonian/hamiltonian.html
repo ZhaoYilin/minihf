@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>minihf.hamiltonian.hamiltonian &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/logo.ico"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start with MiniHF</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../integral.html">Molecular Integrals in MiniHF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hf.html">Hartree-Fock Method</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">minihf</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">minihf.hamiltonian.hamiltonian</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for minihf.hamiltonian.hamiltonian</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.basis.basis_set</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasisSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian.integral.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">Overlap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian.integral.kinetic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kinetic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian.integral.nuclear_attraction</span><span class="w"> </span><span class="kn">import</span> <span class="n">NuclearAttraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian.integral.electron_repulsion</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElectronRepulsion</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Hamiltonian&#39;</span><span class="p">]</span>
+
+
+<span class="n">ncpu</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="Hamiltonian">
+<a class="viewcode-back" href="../../../api/minihf.hamiltonian.hamiltonian.html#minihf.hamiltonian.hamiltonian.Hamiltonian">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Hamiltonian</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Chemical Hamiltonian for a Schrodinger equation.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __init__(self, nspatial)</span>
+<span class="sd">        Initialize the Hamiltonian.</span>
+
+<span class="sd">    assign_operators(self, operator)</span>
+<span class="sd">        Assigns operator integral to the Hamiltonian.</span>
+
+<span class="sd">    ClassMethods</span>
+<span class="sd">    ------------</span>
+<span class="sd">    build(cls,molecule,basis_set)</span>
+<span class="sd">        Build the Chemical Hamiltonian</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate new molecule object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="Hamiltonian.build">
+<a class="viewcode-back" href="../../../api/minihf.hamiltonian.hamiltonian.html#minihf.hamiltonian.hamiltonian.Hamiltonian.build">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">orbs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the chemical hamiltonian.</span>
+
+<span class="sd">        Parmeters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        mol : Molecule</span>
+<span class="sd">            Instance of Molecule.</span>
+
+<span class="sd">        orb : BasisSet</span>
+<span class="sd">            Instance of BasisSet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#Create new object instance.</span>
+        <span class="n">ham</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">ham</span><span class="o">.</span><span class="n">mol</span> <span class="o">=</span> <span class="n">mol</span>
+        <span class="n">ham</span><span class="o">.</span><span class="n">orbs</span> <span class="o">=</span> <span class="n">orbs</span>
+        
+        <span class="c1">#Build integral matrices.</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">build_overlap</span><span class="p">(</span><span class="n">orbs</span><span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">build_kinetic</span><span class="p">(</span><span class="n">orbs</span><span class="p">)</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">build_nuclear_attraction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">orbs</span><span class="p">)</span>
+        <span class="n">Hcore</span> <span class="o">=</span> <span class="n">T</span><span class="o">+</span><span class="n">V</span>
+        <span class="n">Eri</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">build_electron_repulsion</span><span class="p">(</span><span class="n">orbs</span><span class="p">)</span>
+        <span class="c1">#Eri = ElectronRepulsion.build(orbs)</span>
+        
+        <span class="c1">#Assign operators to Hamiltonian.</span>
+        <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S</span>
+        <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">V</span>
+        <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;Hcore&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Hcore</span>
+        <span class="n">ham</span><span class="p">[</span><span class="s1">&#39;Eri&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Eri</span>
+        
+        <span class="k">return</span> <span class="n">ham</span></div>
+
+    
+
+<div class="viewcode-block" id="Hamiltonian.build_overlap">
+<a class="viewcode-back" href="../../../api/minihf.hamiltonian.hamiltonian.html#minihf.hamiltonian.hamiltonian.Hamiltonian.build_overlap">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">basis_set</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the overlap integral matrix.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        basis_set : BasisSet</span>
+<span class="sd">            Hatree Fock basis set instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If basis_set parameter is not a BasisSet instance.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        S_matrix: np.array</span>
+<span class="sd">            Return the overlap integral matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basis_set</span><span class="p">,</span> <span class="n">BasisSet</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;basis_set parameter must be a BasisSet instance.&quot;</span><span class="p">)</span>
+        
+        <span class="n">S_integral</span> <span class="o">=</span> <span class="n">Overlap</span><span class="p">()</span>
+        <span class="n">norb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis_set</span><span class="p">)</span>    
+        <span class="n">S_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">norb</span><span class="p">,</span><span class="n">norb</span><span class="p">))</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">norb</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">S_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">S_integral</span><span class="o">.</span><span class="n">contracted</span><span class="p">(</span><span class="n">basis_set</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">basis_set</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                
+        <span class="n">S_matrix</span> <span class="o">=</span> <span class="n">S_matrix</span> <span class="o">+</span> <span class="n">S_matrix</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">S_matrix</span><span class="o">.</span><span class="n">diagonal</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">S_matrix</span></div>
+
+    
+<div class="viewcode-block" id="Hamiltonian.build_kinetic">
+<a class="viewcode-back" href="../../../api/minihf.hamiltonian.hamiltonian.html#minihf.hamiltonian.hamiltonian.Hamiltonian.build_kinetic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_kinetic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">basis_set</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the kinetic integral matrix.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        basis_set : BasisSet</span>
+<span class="sd">            Hatree Fock basis set instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If basis_set parameter is not a BasisSet instance.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        T_matrix: np.array</span>
+<span class="sd">            Return the kinetic integral matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basis_set</span><span class="p">,</span> <span class="n">BasisSet</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;basis_set parameter must be a BasisSet instance.&quot;</span><span class="p">)</span>
+        
+        <span class="n">T_integral</span> <span class="o">=</span> <span class="n">Kinetic</span><span class="p">()</span>
+        <span class="n">norb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis_set</span><span class="p">)</span>    
+        <span class="n">T_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">norb</span><span class="p">,</span><span class="n">norb</span><span class="p">))</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">norb</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">T_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_integral</span><span class="o">.</span><span class="n">contracted</span><span class="p">(</span><span class="n">basis_set</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">basis_set</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">T_matrix</span> <span class="o">=</span> <span class="n">T_matrix</span> <span class="o">+</span> <span class="n">T_matrix</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">T_matrix</span><span class="o">.</span><span class="n">diagonal</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">T_matrix</span> </div>
+
+
+<div class="viewcode-block" id="Hamiltonian.build_nuclear_attraction">
+<a class="viewcode-back" href="../../../api/minihf.hamiltonian.hamiltonian.html#minihf.hamiltonian.hamiltonian.Hamiltonian.build_nuclear_attraction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_nuclear_attraction</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">molecule</span><span class="p">,</span><span class="n">basis_set</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the nuclear repulsion operator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        basis_set : BasisSet</span>
+<span class="sd">            Hatree Fock basis set instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If basis_set parameter is not a BasisSet instance.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        operator: Kinetic</span>
+<span class="sd">            Return an operator instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>  
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">molecule</span><span class="p">,</span> <span class="n">Molecule</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;molecule parameter must be a Molecule instance&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basis_set</span><span class="p">,</span> <span class="n">BasisSet</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;basis_set parameter must be a BasisSet instance&quot;</span><span class="p">)</span>
+        
+        <span class="n">V_integral</span> <span class="o">=</span> <span class="n">NuclearAttraction</span><span class="p">()</span>
+        <span class="n">norb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis_set</span><span class="p">)</span>
+        <span class="n">V_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">norb</span><span class="p">,</span><span class="n">norb</span><span class="p">))</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">norb</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">V_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">V_integral</span><span class="o">.</span><span class="n">contracted</span><span class="p">(</span><span class="n">basis_set</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">basis_set</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">molecule</span><span class="p">)</span>
+        <span class="n">V_matrix</span> <span class="o">=</span> <span class="n">V_matrix</span> <span class="o">+</span> <span class="n">V_matrix</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">V_matrix</span><span class="o">.</span><span class="n">diagonal</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">V_matrix</span></div>
+
+
+
+<div class="viewcode-block" id="Hamiltonian.build_electron_repulsion">
+<a class="viewcode-back" href="../../../api/minihf.hamiltonian.hamiltonian.html#minihf.hamiltonian.hamiltonian.Hamiltonian.build_electron_repulsion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_electron_repulsion</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">basis_set</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the electron repulsion integral matrix.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        basis_set : BasisSet</span>
+<span class="sd">            Hatree Fock basis set instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If basis_set parameter is not a BasisSet instance.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        Eri_matrix: np.array</span>
+<span class="sd">            Return the electron repulsion integral matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">minihf.hamiltonian.auxiliary</span><span class="w"> </span><span class="kn">import</span> <span class="n">eint</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basis_set</span><span class="p">,</span> <span class="n">BasisSet</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;basis_set parameter must be a BasisSet instance&quot;</span><span class="p">)</span>
+
+        <span class="n">Eri_integral</span> <span class="o">=</span> <span class="n">ElectronRepulsion</span><span class="p">()</span>
+        <span class="n">norb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis_set</span><span class="p">)</span>
+        <span class="n">integral_list</span> <span class="o">=</span> <span class="p">[]</span>    
+        <span class="n">Eri_tensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">norb</span><span class="p">,</span><span class="n">norb</span><span class="p">,</span><span class="n">norb</span><span class="p">,</span><span class="n">norb</span><span class="p">))</span>
+
+        <span class="c1"># Calculate integral list with 8-fold permutational symmetry</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">norb</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="ow">or</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">d</span> <span class="ow">or</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">c</span> <span class="ow">or</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">c</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">d</span><span class="p">)):</span>
+                <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="p">))</span>
+                <span class="n">bases</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">basis_set</span><span class="p">[</span><span class="n">a</span><span class="p">],</span><span class="n">basis_set</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">basis_set</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="n">basis_set</span><span class="p">[</span><span class="n">d</span><span class="p">]))</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">ncpu</span><span class="p">)</span>
+        <span class="n">integral_list</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">Eri_integral</span><span class="o">.</span><span class="n">contracted</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># Build integral tensor from list </span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">norb</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">Eri_tensor</span><span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">integral_list</span><span class="p">[</span><span class="n">eint</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">Eri_tensor</span></div>
+</div>
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>minihf.scf.rhf &mdash; minihf 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/logo.ico"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start with MiniHF</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Theory &amp; Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../integral.html">Molecular Integrals in MiniHF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hf.html">Hartree-Fock Method</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">minihf</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">minihf</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">minihf.scf.rhf</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for minihf.scf.rhf</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="rhf">
+<a class="viewcode-back" href="../../../api/minihf.scf.rhf.html#minihf.scf.rhf.rhf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rhf</span><span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">Hcore</span><span class="p">,</span><span class="n">Eri</span><span class="p">,</span><span class="n">nocc</span><span class="p">,</span><span class="n">energy_nuc</span><span class="p">,</span><span class="n">I_thld</span><span class="p">,</span><span class="n">E_thld</span><span class="p">,</span><span class="n">D_thld</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Restricted close-shell Hartree Fock algorithm.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    S: np.ndarray</span>
+<span class="sd">        Overlap matrix.</span>
+<span class="sd">    Hcore: np.ndarray</span>
+<span class="sd">        Core Hamiltonian matrix.</span>
+<span class="sd">    Eri: np.ndarray</span>
+<span class="sd">        Electron repulsion matrix.</span>
+<span class="sd">    nocc: int</span>
+<span class="sd">        Number of occupied orbitals.</span>
+<span class="sd">    I_thld: int</span>
+<span class="sd">        Threshold of iteration number.</span>
+<span class="sd">    E_thld: float</span>
+<span class="sd">        Threshold of energy convergence.</span>
+<span class="sd">    D_thld: float</span>
+<span class="sd">            Threshold of density matrix convergence.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : dict</span>
+<span class="sd">        Hartree Fock calculation results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Build the orthogonalization matrix X = S^(-1/2)</span>
+    <span class="n">eigval</span><span class="p">,</span> <span class="n">eigvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">eigvec</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">eigval</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">))</span> <span class="o">@</span> <span class="n">eigvec</span><span class="o">.</span><span class="n">T</span>
+    
+    <span class="c1"># Initial guess: Core Hamiltonian</span>
+    <span class="n">Fp</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">Hcore</span> <span class="o">@</span> <span class="n">X</span>
+    <span class="n">Emo</span><span class="p">,</span> <span class="n">Cp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">Fp</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">Cp</span>
+    <span class="n">D_spin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pi,qi-&gt;pq&#39;</span><span class="p">,</span> <span class="n">C</span><span class="p">[:,:</span><span class="n">nocc</span><span class="p">],</span> <span class="n">C</span><span class="p">[:,:</span><span class="n">nocc</span><span class="p">])</span>
+    
+    <span class="c1"># Store initial value of electronic energy and density matrix</span>
+    <span class="n">Dold</span> <span class="o">=</span> <span class="n">D_spin</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Eold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Hcore</span><span class="p">,</span> <span class="n">D_spin</span><span class="p">)</span>
+
+    <span class="c1"># SCF Iterations</span>
+    <span class="k">for</span> <span class="n">Iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">I_thld</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># Update Fock matrix</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pqrs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">D_spin</span><span class="p">)</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;prqs,rs-&gt;pq&#39;</span><span class="p">,</span> <span class="n">Eri</span><span class="p">,</span> <span class="n">D_spin</span><span class="p">)</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">Hcore</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">J</span> <span class="o">-</span> <span class="n">K</span>
+
+        <span class="c1"># Update density matrix</span>
+        <span class="n">Fp</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">F</span> <span class="o">@</span> <span class="n">X</span>
+        <span class="n">Emo</span><span class="p">,</span> <span class="n">Cp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">Fp</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">Cp</span>
+        <span class="n">D_spin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pi,qi-&gt;pq&#39;</span><span class="p">,</span> <span class="n">C</span><span class="p">[:,:</span><span class="n">nocc</span><span class="p">],</span> <span class="n">C</span><span class="p">[:,:</span><span class="n">nocc</span><span class="p">])</span>
+        
+        <span class="c1"># Update electronic energy</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;pq,pq-&gt;&#39;</span><span class="p">,</span> <span class="n">Hcore</span><span class="o">+</span><span class="n">F</span><span class="p">,</span> <span class="n">D_spin</span><span class="p">)</span>
+        
+        <span class="c1"># Update convergence</span>
+        <span class="n">dE</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">E</span><span class="o">-</span><span class="n">Eold</span><span class="p">)</span>
+        <span class="n">dRMS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">D_spin</span><span class="o">-</span><span class="n">Dold</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+
+        <span class="c1"># Store Updated electronic energy and density matrix</span>
+        <span class="n">Dold</span> <span class="o">=</span> <span class="n">D_spin</span>
+        <span class="n">Eold</span> <span class="o">=</span> <span class="n">E</span>
+
+        <span class="c1"># Check convergence</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">dE</span> <span class="o">&lt;</span> <span class="n">E_thld</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dRMS</span> <span class="o">&lt;</span> <span class="n">D_thld</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">Iter</span> <span class="o">==</span> <span class="n">I_thld</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Maximum number of SCF cycles exceeded.&quot;</span><span class="p">)</span>
+    
+    <span class="n">D_total</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">D_spin</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;energy_elec&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">E</span><span class="p">),</span>
+    <span class="s2">&quot;energy_nuc&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">energy_nuc</span><span class="p">),</span>
+    <span class="s2">&quot;energy_total&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">E</span> <span class="o">+</span> <span class="n">energy_nuc</span><span class="p">),</span>
+    <span class="s2">&quot;mo_energy&quot;</span><span class="p">:</span> <span class="n">Emo</span><span class="p">,</span>
+    <span class="s2">&quot;mo_coeff&quot;</span><span class="p">:</span> <span class="n">C</span><span class="p">,</span>
+    <span class="s2">&quot;rdm1&quot;</span><span class="p">:</span> <span class="n">D_total</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="n">results</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Yilin Zhao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
